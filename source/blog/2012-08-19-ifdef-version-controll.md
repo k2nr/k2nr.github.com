@@ -1,0 +1,116 @@
+---
+title: ソースコード履歴をifdefで管理してるとこもあったりする
+date: 2012-08-19 17:39
+comments: true
+sharing: true
+footer: false
+categories: VCS ネタ
+---
+
+以前、[こんな記事][1]を読んでふと思い出したのでネタにします。
+僕が昔携わってたプロジェクトでも興味深い管理がされていました。それはC/C++の`#ifdef`を用いたバージョン管理です。
+正確には、全てのコミット単位で`#ifdef`を用いていたわけではなくて機能のリリース単位で`#ifdef`を使った管理をしていたのですが、ちょっと面白い話なので説明します。
+
+[1]: http://d.hatena.ne.jp/irof/20120815/p1
+
+`#ifdef`,`#else`,`#endif`ってご存知でしょうか？C/C++を使ったことない人は知らないと思うので簡単に概要だけ説明すると
+
+{% codeblock lang:c %}
+#ifdef FLAG
+int func() {
+    // ...
+}
+#endif
+{% endcodeblock %}
+
+こんな感じのコードが書かれていると`#ifdef`から`#endif`までの間はFLAGが定義されている(`#define FLAG`)場合のみコンパイルされるコードになります。その他詳しい仕様はWEBで。
+
+さて、僕が携わっていたプロジェクトでは大体半年に一回リリースが行われて、ひとつの開発サイクル中に追加・修正・削除されたコードはその開発サイクルを一意に示すコンパイルスイッチを`#define`して管理していました。
+どういうことかというと例えば`XXX_2012_1`というスイッチによって2012年1期の開発を行なっており、前期まではfunc関数は`"hi world"`を出力していたところを今期では`"hello world"`を出力する仕様に変更されたとしましょう。
+
+{% codeblock lang:c %}
+// ...
+
+int func() {
+#ifdef XXX_2012_1
+    // 2012年1期のコード
+    printf("hello world\n");
+#else
+    // 前期のコード
+    printf("hi world\n");
+#endif
+}
+
+// ...
+{% endcodeblock %}
+
+こんなコードを書いて、仮に`XXX_2012_1`が`#define`されなかった場合は前期のコードが動くようにしていました。
+しかし、この段階ではまだ許せる範囲でしょうか。
+
+話を続けて、2012年第2期の開発を迎えました。今期では、`func`関数内で出力されていた`"world"`に続けて`", [名前]"`と出力する仕様になったとしましょう。名前は関数`get_name()`で取得できるとします。
+ここで特殊なのは`XXX_2012_1`で追加されたコードが`XXX_2012_2`の段階で定義されているとは限らないことです。つまり`XXX_2012_2`だけ定義されていて`XXX_2012_1`は定義されていない状況を想定しなければなりません。そうすると2012年2期のコードは次のようになります。
+
+{% codeblock lang:c %}
+// ...
+
+int func() {
+#ifdef XXX_2012_2
+#ifdef XXX_2012_1
+    printf("hello world, %s\n", get_name());
+#else
+    printf("hi world, %s\n", get_name());
+#endif
+#else
+#ifdef XXX_2012_1
+    // 2012年1期のコード
+    printf("hello world\n");
+#else
+    // 前期のコード
+    printf("hi world\n");
+#endif
+#endif
+}
+
+// ...
+{% endcodeblock %}
+
+だいぶ頭のおかしいコードになってきましたね。それでは次に2013年第1期では`func()`関数にバグが見つかり、`get_name()`で取得した文字列は呼び出し側で開放しなければならない仕様だったので`func()`呼び出しごとにメモリリークが発生していたとしましょう。たとえ既存のコードのバグ修正であったとしても期を跨いでの修正はちゃんと`#ifdef`しなければなりません。
+{% codeblock lang:c %}
+// ...
+
+int func() {
+#ifdef XXX_2012_2
+#ifdef XXX_2013_1
+    char* name = get_name();
+#ifdef XXX_2012_1
+    printf("hello world, %s\n", name);
+#else
+    printf("hi world, %s\n", name);
+#endif
+    free(name);
+#else
+#ifdef XXX_2012_1
+    printf("hello world, %s\n", get_name());
+#else
+    printf("hi world, %s\n", get_name());
+#endif
+#endif
+#else
+#ifdef XXX_2012_1
+    // 2012年1期のコード
+    printf("hello world\n");
+#else
+    // 前期のコード
+    printf("hi world\n");
+#endif
+#endif
+}
+
+// ...
+{% endcodeblock %}
+
+。。。書いてて正しいのかどうか分からなくってきたけど多分あってます。かなりキマってきましたね。これ以上は続けませんが、期を重ねるごとに天文学的勢いでコード量が(それも、実際には動かないコードが)増えていくことは容易に想像できますね。
+
+ちなみに省略していますが、該当のコードを「誰が」「いつ」「なぜ」修正したのかはソースコードの該当箇所にしっかり記述しなければならないルールでした。
+
+このようなプロジェクトに皆様が配属されないことを切に願っています。

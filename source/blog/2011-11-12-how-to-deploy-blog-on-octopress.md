@@ -1,0 +1,73 @@
+---
+title: "Octopressを使ってGithub上でブログを運用してみる"
+date: 2011-11-12 07:46
+comments: true
+sharing: true
+footer: true
+categories: octopress
+---
+
+{% blockquote octopress.org http://octopress.org %}
+Octopress is a framework designed by Brandon Mathis for Jekyll, the blog aware static site generator powering Github Pages.
+{% endblockquote %}
+
+### Octopressとは何か
+
+[Octopress][1]を使ってブログを作ってみました。
+[Octopress][1]というのはrubyで開発されてるブログ管理ツールのようなもので、これを使うとGithub pagesを利用してブログを運用することができます。
+How toについては[本家のマニュアル][2]が詳しいです。書かれてる通りにやったら、とりあえずブログ開設するまでは５分ちょいでいけましたよ。
+
+[1]: http://octopress.org/
+[2]: http://octopress.org/docs/
+
+### 何がうれしいのか
+
+もともと僕はBloggerでブログ運用していたり、さらに以前はwordpressを使ってたりもしてました。[Octopress][1]を使ってみようと思った理由は他のものと比べて次のメリットがあると感じたからです。
+
+* markdownで書くのでシンプルで書きやすい。vimだけで完結する。
+* コマンドラインベースでブログ運営できる。
+* まだまだ[Octopress][1]はユーザーが少ないので「みんながWordpress使ってるから俺は使いたくない！」という天邪鬼な僕の魂に火がついた。
+* rubyで開発されてるので、問題が発生したときも実装を追いやすいし機能追加もしやすい。（PHPはよく分からん）
+
+### 何がうれしくないのか
+
+一方、デメリットは
+
+* プラグインがまだまだ少ない
+* テーマがまだまだ少ない
+
+でしょうね。ただしこれは、「自分で作れる」というメリットとも（無理矢理）捉えられますね。何か作ろうと思ったときに作ろうと思ったものが既に世の中に存在するときほど寂しいものはありません。
+
+あと、[Octpress][1]は静的なHTMLを出力するだけなのでコメントなどが使えないというデメリットがありますが、これは例えばコメントなら[DISQUS][3]というコメントサービスを利用することで解決しています。
+動的な動作を必要とする機能といえば、「人気の記事」とか「アクセス解析」とかが考えられますが、どちらも**はてなブックマーク**、**Google Analytics**といった外部サービスがあるので、静的の縛りはデメリットにはならないかなと思います。
+
+[3]: http://disqus.com/
+
+### 投稿をより便利に
+
+ところで、新規ポスト作成が若干冗長です。
+正規の手順では新規ポストを作成するためには、次のコマンドを実行してテンプレートを作成します。
+
+{% codeblock %}
+rake new_post["post name"]
+{% endcodeblock %}
+
+これをやると`source/_posts/2011-11-12-post-name.mkd`みたいなmarkdownファイルが生成されるんですが、僕はこの後に必ずエディタで生成されたファイルを開くのでこの手順をまとめたい！
+
+ということで、簡単なスクリプトを作りました。
+
+{% codeblock %}
+#!/bin/bash
+
+p=`rake new_post["$1"] | sed -e "s/Creating new post: //"`
+mvim $p
+{% endcodeblock %}
+これで、次のように新規ポストを作成することができます。
+
+{% codeblock %}
+./newpost "post name"
+{% endcodeblock %}
+
+### 手応えアリ
+
+まだ使い始めたばかりなのですがFirst Impressionとしてはもう乗り換え確定です。これからカスタマイズしてくのも楽しそうですね。

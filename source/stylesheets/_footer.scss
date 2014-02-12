@@ -1,0 +1,30 @@
+footer {
+  width:270px;
+  float:left;
+  position:fixed;
+  bottom:50px;
+}
+
+footer {
+  font-size: 14px;
+  color: #bbb;
+}
+footer h4 {
+  margin-bottom: 10px;
+}
+footer ol {
+  list-style: none;
+  padding-left: 0;
+}
+footer ol li {
+  margin: 3px 0;
+}
+footer .col {
+  width: 250px;
+  float: left;
+  padding: 0 20px 10px 0;
+}
+footer p {
+  clear: both;
+  margin: 0;
+}
