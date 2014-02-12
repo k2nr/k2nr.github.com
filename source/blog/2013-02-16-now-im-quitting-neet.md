@@ -34,7 +34,7 @@ Web上でオープンにしている僕の情報は本ブログ及び[Github][1]
 
 真面目に作業してる画像を撮影してもらったので晒しときます。見てのとおりすごく真面目に頑張ってるので皆様応援してください。
 
-{% img https://dl.dropbox.com/s/9z26nv29p7nm8tp/20130216_X-Pro1022_DSF6068_mini.jpg?token_hash=AAE6fo3SDySw-oqJam6MBKza_S4v5JCdvYIRX3cPVuqkdQ&dl=1 %}
+![](https://dl.dropbox.com/s/9z26nv29p7nm8tp/20130216_X-Pro1022_DSF6068_mini.jpg?token_hash=AAE6fo3SDySw-oqJam6MBKza_S4v5JCdvYIRX3cPVuqkdQ&dl=1)
 
 [1]: https://github.com/k2nr
 [2]: http://k2nr.me/

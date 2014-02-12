@@ -64,7 +64,7 @@ HerokuでClojureが運用できるということで、どうしても試して�
 
 依存ライブラリは`project.clj`に書きます。特に難しい話は無いのでコピペすればいいじゃない！
 
-{% codeblock lang:clj project.clj %}
+```clj
 (defproject guchitter "1.0.0-SNAPSHOT"
   :description "guchitter"
   :dependencies [[org.clojure/clojure "1.3.0"]
@@ -77,7 +77,7 @@ HerokuでClojureが運用できるということで、どうしても試して�
                  [ring/ring-devel "1.1.0-SNAPSHOT"]
                 ]
   :main guchitter.core)
-{% endcodeblock %}
+```
 
 ちなみに、ライブラリの検索、バージョンの確認には[Clojars][5]というサイトを使います。
 
@@ -88,7 +88,7 @@ HerokuでClojureが運用できるということで、どうしても試して�
 早速Compojureの使い方を見ていきましょう。
 `src/guchitter/core.clj`は名前のとおりアプリの核となるベースの処理を書いています。
 
-{% codeblock lang:clj src/guchitter/core.clj %}
+```clj
 (ns guchitter.core
   (:use
     [compojure.core :only [defroutes]]
@@ -124,7 +124,7 @@ HerokuでClojureが運用できるということで、どうしても試して�
         port 8080]
     (start port dev-app)))
 
-{% endcodeblock %}
+```
 
 `ns`,`use`,`require`とかは他のサイトなどで使い方を確認しておいて下さい。
 
@@ -132,20 +132,20 @@ HerokuでClojureが運用できるということで、どうしても試して�
 
 `defroutes`マクロでルーティングを定義します。
 
-{% codeblock lang:clj src/guchitter/core.clj %}
+```clj
 (defroutes main-routes
   controller/routes
   (files "/")
   (resources "/")
   (not-found (layout/not-found))) ;not-foundを通すと文字化けする
-{% endcodeblock %}
+```
 
 先頭の`controller/routes`は`controller/routes`のルーティングを参照することを示しています。該当のコードを引用すると
-{% codeblock lang:clj src/guchitter/controllers/guchi.clj %}
+```clj
 (defroutes routes
   (GET "/" [] (index))
   (POST "/" {params :params} (create params)))
-{% endcodeblock %}
+```
 
 最初に、`/`にGETリクエストがきた場合、`index`関数が呼ばれて(`index`関数の詳細は後で登場します)、index関数は表示する完全なhtmlを返します。
 同様に`/`にPOSTリクエストがきた場合、POSTのパラメータがparamsに入り、それをcreate関数に渡し、create関数は送られた愚痴をDBに登録した後にこのときに表示すべきHTMLを返します。(厳密にはウソです。実際にはHTMLではなく`/`にリダイレクトするHTTPのレスポンスを返します)
@@ -188,7 +188,7 @@ HerokuでClojureが運用できるということで、どうしても試して�
 
 これで`guchi.models.migration/-main`関数が実行されます。`migration.clj`の解説は省略します。これはテーブルを作成するためのスクリプトです。コードは以下のとおり。
 
-{% codeblock lang:clj src/guchitter/controllers/guchi.clj %}
+```clj
 (ns guchitter.models.migration
   (:use [guchitter.models.db :only [my-db]])
   (require [clojure.java.jdbc :as sql]))
@@ -204,7 +204,7 @@ HerokuでClojureが運用できるということで、どうしても試して�
   (print "Migrating database...") (flush)
   (create-guchi)
   (println " done"))
-{% endcodeblock %}
+```
 
 migrationで使用されているSQL関連は次回解説しますね。
 
@@ -224,9 +224,9 @@ migrationで使用されているSQL関連は次回解説しますね。
 
 こんなどうしようもないニートのためにお金を使ってくれる人がいるなんて、涙が出るほど嬉しいです。ほんとにありがとうございます。
 
-{% img https://lh6.googleusercontent.com/-O5Nm5MJ_mL0/T2sbNxGXUQI/AAAAAAAAB6g/g5U58Z2ggPQ/s640/CameraZOOM-20120321191940267.jpg %}
+![](https://lh6.googleusercontent.com/-O5Nm5MJ_mL0/T2sbNxGXUQI/AAAAAAAAB6g/g5U58Z2ggPQ/s640/CameraZOOM-20120321191940267.jpg)
 
-{% img https://lh6.googleusercontent.com/-vLZhXTZVNzg/T2sbOpWcBmI/AAAAAAAAB6o/n85ZLzzOYnQ/s640/CameraZOOM-20120322194904594.jpg %}
+![](https://lh6.googleusercontent.com/-vLZhXTZVNzg/T2sbOpWcBmI/AAAAAAAAB6o/n85ZLzzOYnQ/s640/CameraZOOM-20120322194904594.jpg)
 
 もしまだ寄付してもいいよ！という人がいれば[こちら][6]から商品を送ってくだしあ！！！
 

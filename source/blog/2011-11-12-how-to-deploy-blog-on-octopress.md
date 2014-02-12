@@ -7,10 +7,6 @@ footer: true
 categories: octopress
 ---
 
-{% blockquote octopress.org http://octopress.org %}
-Octopress is a framework designed by Brandon Mathis for Jekyll, the blog aware static site generator powering Github Pages.
-{% endblockquote %}
-
 ### Octopressとは何か
 
 [Octopress][1]を使ってブログを作ってみました。
@@ -48,25 +44,25 @@ How toについては[本家のマニュアル][2]が詳しいです。書かれ
 ところで、新規ポスト作成が若干冗長です。
 正規の手順では新規ポストを作成するためには、次のコマンドを実行してテンプレートを作成します。
 
-{% codeblock %}
+```
 rake new_post["post name"]
-{% endcodeblock %}
+```
 
 これをやると`source/_posts/2011-11-12-post-name.mkd`みたいなmarkdownファイルが生成されるんですが、僕はこの後に必ずエディタで生成されたファイルを開くのでこの手順をまとめたい！
 
 ということで、簡単なスクリプトを作りました。
 
-{% codeblock %}
+```
 #!/bin/bash
 
 p=`rake new_post["$1"] | sed -e "s/Creating new post: //"`
 mvim $p
-{% endcodeblock %}
+```
 これで、次のように新規ポストを作成することができます。
 
-{% codeblock %}
+```
 ./newpost "post name"
-{% endcodeblock %}
+```
 
 ### 手応えアリ
 

@@ -29,7 +29,7 @@ categories: clojure, compojure, heroku
 
 [Hiccup]はHTMLテンプレートエンジンです。めんどくさいのでさっそくコードを眺めてみましょう。
 
-{% codeblock lang:clj views/layout.clj %}
+```clj
 (ns guchitter.views.layout
   (:use [hiccup.core :only [html]]
         [hiccup.page-helpers :only [doctype include-css]]))
@@ -52,9 +52,9 @@ categories: clojure, compojure, heroku
   (common-content "404"
                   [:div {:id "not-found"}
                    "404 Page Not Found"]))
-{% endcodeblock %}
+```
 
-{% codeblock lang:clj views/guchi.clj %}
+```clj
 (ns guchitter.views.guchi
   (:use [hiccup.core :only [html h]]
         [hiccup.page-helpers :only [doctype]]
@@ -78,7 +78,7 @@ categories: clojure, compojure, heroku
   (layout/common-content "ぐちってー"
                          (guchi-form)
                          (display-guchi guchi)))
-{% endcodeblock %}
+```
 
 Hiccupでは一つのHTMLエレメントを配列で表現します。配列の最初の要素がHTMLエレメントの名前、第2要素にHTMLエレメントの属性をマップで、第3要素以降に中身を記述します。当然、中身は配列の入れ子構造になることもあります。
 試しにREPLで次のコードを実行してみましょう。
@@ -99,13 +99,13 @@ guchitter.core> (hiccup.core/html [:div {:id "guchi-form" :class "hero-unit"} [:
 
 postgresqlの操作にはclojureのjdbcインタフェースを使用します。
 
-{% codeblock lang:clj models/db.clj %}
+```clj
 (ns guchitter.models.db)
 
 (def my-db (System/getenv "DATABASE_URL"))
-{% endcodeblock %}
+```
 
-{% codeblock lang:clj models/guchi.clj %}
+```clj
 (ns guchitter.models.guchi
   (:use [guchitter.models.db :only [my-db]])
   (:require [clojure.java.jdbc :as sql]))
@@ -119,7 +119,7 @@ postgresqlの操作にはclojureのjdbcインタフェースを使用します�
 (defn create [guchi]
   (sql/with-connection my-db
     (sql/insert-values :guchi [:body] [guchi])))
-{% endcodeblock %}
+```
 
 `clojure.java.jdbc/with-connection`マクロは第1引数で指定されたDBに対して以降の引数を実行します。この例では`clojure.java.jdbc/with-query-results`と`clojure.java.jdbc/insert-values`を使用しています。本題とは逸れますが、ここではこれらのマクロの使用方法をClojureのREPLを使って確認しましょう。決して説明がめんどくさくなったわけではありません。REPLで以下のように実行して下さい。
 

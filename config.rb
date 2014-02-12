@@ -35,6 +35,10 @@ Slim::Engine.set_default_options :shortcut => {
   '&' => {:tag => 'input', :attr => 'type'}
 }
 
+after_build do
+  `cp -R slides build`
+end
+
 # Compass
 # Change Compass configuration
 # compass_config do |config|
@@ -42,9 +46,11 @@ Slim::Engine.set_default_options :shortcut => {
 # end
 
 # Page options, layouts, aliases and proxies
-page "/feed.xml", layout: false
+
+page "/atom.xml", layout: false
 page "blog/*", layout: :post
 page "blog/index.html", layout: :layout
+page "/sitemap.xml", layout: false
 
 # A path which all have the same layout
 # with_layout :admin do

@@ -37,38 +37,38 @@ categories: programming, Clojure, Leiningen, VimClojure
 
 と実行するとhelloプロジェクトがカレントディレクトリ以下に作成されます。
 
-{% codeblock lang:clj project.clj %}
+```clj
 (defproject hello "1.0.0-SNAPSHOT"
   :description "FIXME: write description"
   :dependencies [[org.clojure/clojure "1.3.0"]])
-{% endcodeblock %}
+```
 
 初期状態で`project.clj`はこんな感じになってるはずです。`project.clj`はその名の通り、プロジェクトのタイトルを決めたり、使用するライブラリを定義したりするプロジェクトファイルです。例えば、プロジェクトでclojure-contribライブラリを使用したいなら`:dependencies`の部分を以下のように書き換えます。
 
-{% codeblock lang:clj %}
+```clj
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/clojure-contrib "1.2.0"]]
-{% endcodeblock %}
+```
 
 この状態でコマンドラインから`lein deps`と実行すると自動的にプロジェクトで使用するライブラリの依存関係を解決してくれます。便利ですね。
 
 さて、`project.clj`を以下のように書き換えてみましょう。
 
-{% codeblock lang:clj project.clj %}
+```clj
 (defproject hello "1.0.0-SNAPSHOT"
   :description "FIXME: write description"
   :dependencies [[org.clojure/clojure "1.3.0"]]
   :main hello.core)
-{% endcodeblock %}
+```
 
 ここで追記した`:main hello.core`は「`hello.core`ネームスペース内の`-main`関数がプロジェクトのメイン関数である」ことを示しています。
 さらに、`src/hello/core.clj`を次のようにしてみます。
-{% codeblock lang:clj core.clj %}
+```clj
 (ns hello.core)
 
 (defn -main []
   (println "hello, world"))
-{% endcodeblock %}
+```
 
 この状態で`lein run`を実行すると
 
@@ -139,13 +139,13 @@ NGServer started on 127.0.0.1, port 2113.
 
 試しに
 
-{% codeblock lang:clj project.clj %}
+```clj
 (ns hello.core)
 
 (defn -main []
   (+ 1 2)
   )
-{% endcodeblock %}
+```
 
 ソースを↑こんな感じにして、4行目にカーソルを置いた状態で`<LocalLeader>el`とキーを押してみると。。おお！`(+ 1 2)`が評価されましたね！これは捗りますね！
 

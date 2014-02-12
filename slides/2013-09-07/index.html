@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Lispかわいいよ</title>
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section data-markdown
+					data-separator="\n---\n$"
+					data-vertical="\n--\n">
+					<script type="text/template">
+# Lispかわいいよ
+
+Kazunori Kajihiro
+
+[@k2nr_](https://twitter.com/k2nr_)
+
+---
+
+## 最近引っ越しました
+
+---
+
+## 切実にお金がありません
+
+---
+
+## お金をください
+
+三菱東京UFJ銀行
+
+横浜駅前支店
+
+普通 3119552
+
+カジヒロカズノリ
+
+---
+
+## ちーちゃん
+
+![ちーちゃん](img/chichan.jpg)
+
+---
+
+## ちーちゃん
+
+![ちーちゃん](img/chichan2.jpg)
+
+---
+
+### ちーちゃんが10/25に3歳になります！
+
+<http://www.amazon.co.jp/registry/wishlist/CI5BFZ0P9RD2>
+
+---
+
+この資料は↓ここで公開してます
+
+<http://k2nr.me/slides/2013-09-07/index.html>
+
+---
+
+# 本題
+
+---
+
+## モノをください
+
+<http://www.amazon.co.jp/registry/wishlist/3RAOAVXS8DJUV>
+
+---
+
+# 本題
+
+---
+
+## Lispとはなにか
+
+**以降コードは全部Clojure**
+
+```clojure
+(defn fib [x]
+  (if (< x 2)
+    1
+    (+ (fib (- x 2)) (fib (- x 1)))))
+
+(map fib (range 1 10))
+;=> (1 2 3 5 8 13 21 34 55)
+```
+
+---
+
+## S式(S Expression)
+
+* Lispが嫌われる元凶
+* 括弧
+
+---
+
+## S式(S Expression)
+
+* はじめの要素が適用される関数名
+* 第2要素以降が引数
+
+<br />
+フツーの言語だと
+```
+((1 + 2 + 3) * 8) / 4
+```
+
+Lispだと
+```clojure
+(/ (* (+ 1 2 3) 8) 4)
+```
+
+---
+
+# キモチワルイ
+
+---
+
+# なぜS式なのか
+
+---
+
+## S式は抽象構文木である
+
+---
+
+### フツーの言語のコンパイル過程
+
+1. 字句解析(Lexer)
+2. 構文解析(Parser) ← ここで抽象構文木に変換される
+
+---
+
+### フツーの言語のコンパイル過程
+
+```
+((1 + 2 + 3) * 8) / 4
+```
+
+↓
+
+![抽象構文木](img/AST.png)
+
+---
+
+### 見比べてみよう
+
+```clojure
+(/ (* (+ 1 2 3) 8) 4)
+```
+
+![抽象構文木](img/AST.png)
+
+---
+
+# マクロ
+
+---
+
+## Lispはコンパイル前のS式を自由に操作できる
+
+```clojure
+(defmacro infix [[a b c]]
+  (list b a c))
+
+(infix (1 + 1)) ;=> (+ 1 1) => 2
+(infix (2 / 4)) ;=> (/ 2 4) => 1/2
+(infix (3 * 2)) ;=> (* 3 2) => 6
+```
+
+---
+
+## Lispはコンパイル前のS式を自由に操作できる
+
+```clojure
+(defmacro unless [test then else]
+  `(if (not ~test) ~then ~else))
+```
+
+```clojure
+(unless (= 1 0) 1 2))
+;=> (if (not (= 1 0)) 1 2)
+;=> 1
+```
+
+![](img/AST2.png)
+
+---
+
+## Lispはコンパイル前のS式を自由に操作できる
+
+* Programmable Programming Language
+* だからLispは何でもできる
+* Lispにできないことはない
+* Lispは神の言語である
+
+---
+
+### Clojureの神ライブラリを紹介します
+
+---
+
+### core.logic
+```clojure
+(defrel man p)
+(fact man 'Bob)
+(fact man 'Ricky)
+
+(defrel woman p)
+(fact woman 'Mary)
+(fact woman 'Lucy)
+
+(defrel likes p1 p2)
+(fact likes 'Bob 'Mary)
+(fact likes 'Ricky 'Lucy)
+
+(defrel fun p)
+(fact fun 'Lucy)
+
+(run* [q]
+  (fresh [x y]
+    (fun y)
+    (likes x y)
+    (== q [x y]))) ;=> ([Ricky Lucy])
+```
+
+---
+
+### core.async
+```clojure
+(let [ch (chan)]
+  (go
+    (while true
+      (let [v (<! ch)]
+        (println "Read: " v))))
+  (go (>! ch "hi")
+      (<! (timeout 5000))
+      (>! ch "there")))
+```
+
+---
+
+### core.typed
+```clojure
+(cf (fn> [a :- Number] (inc a)))
+;=> [Number -> Number]
+```
+
+---
+
+### core.typed
+
+```clojure
+(ann my-inc [Number -> Number])
+(defn my-inc [n]
+  (let [internal-number 1]
+    (+ n internal-number)))
+
+(ann my-inc2 [Number -> Number])
+(defn my-inc2 [n]
+  (let [internal-number "1"]
+    (+ n internal-number)))
+;; 型エラー
+```
+
+---
+
+## 他の言語じゃできないの？
+
+言語自体に変更を加えればできる
+
+---
+
+### Lispはこれらのライブラリの機能を実現するために言語自体に手を加える必要がない
+---
+
+## まとめ
+
+* お金がありません
+
+---
+
+## まとめ
+
+* ちーちゃん
+
+![ちーちゃん](img/chichan.jpg)
+
+---
+
+## まとめ
+
+* Lispはあらゆる問題に適切な「言語」をLispの上に構築できる
+* 神ははじめにLispをつくり、次の7日間で世界を創造した
+
+					</script>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

@@ -27,7 +27,7 @@ categories: mac
 
 上の理由は半分冗談みたいなものなので、こっからが本番です。
 
-{% img https://lh4.googleusercontent.com/-F9fiLjPbN00/T2iZkEpf0yI/AAAAAAAAB6Q/YY-2I6ITkGk/s800/k2109473173.jpg %}
+![](https://lh4.googleusercontent.com/-F9fiLjPbN00/T2iZkEpf0yI/AAAAAAAAB6Q/YY-2I6ITkGk/s800/k2109473173.jpg)
 
 ### 遠いバックスラッシュ
 
@@ -59,7 +59,7 @@ categories: mac
 
 ## その他KeyReMap4MacBookの設定
 
-{% img https://lh5.googleusercontent.com/-nKS1q4Rvj2I/T2iUSX4jgSI/AAAAAAAAB54/X3BGGla5HSY/s512/Screen%20shot%202012-03-20%20at%2011.28.50%20PM.jpg %}
+![](https://lh5.googleusercontent.com/-nKS1q4Rvj2I/T2iUSX4jgSI/AAAAAAAAB54/X3BGGla5HSY/s512/Screen%20shot%202012-03-20%20at%2011.28.50%20PM.jpg)
 
 僕が使ってる設定の一覧です。
 

@@ -11,7 +11,7 @@ categories:
 
 普通は(正格評価の場合)、次のような求め方をしますね。
 
-{% codeblock lang:c %}
+```c
 int fib(int n) {
     if(n < 2) {
         return 1;
@@ -19,57 +19,57 @@ int fib(int n) {
         return fib(n-2) + fib(n-1);
     }
 }
-{% endcodeblock %}
+```
 
 DP使えば別の方法ももちろんありますが、省きます。
 
 遅延評価を使って書くと、次のように書けます。Clojureです。
 
-{% codeblock lang:clj %}
+```clj
 (def fibs (lazy-cat [0 1] (map + (rest fibs) fibs)))
-{% endcodeblock %}
+```
 
 短いですね。順を追って説明しましょう。
 
 まず`lazy-cat`ですが、これはシーケンスの連結(concat)です。ただし遅延評価のシーケンスを返します。
 
-{% codeblock lang:clj %}
+```clj
 (lazy-cat [1 2 3] [4 5 6])
 => (1 2 3 4 5 6)
-{% endcodeblock %}
+```
 
 つまり`fibs`は、`[0 1]`と`(map + (rest fibs) fibs)`の結果が連結されたものということです。
 mapに第3引数以降を与えると次のような動作をします。
 
-{% codeblock lang:clj %}
+```clj
 (map + [1 2 3] [2 3 4])
 => (3 5 7)
-{% endcodeblock %}
+```
 
 さて、`fibs`の0番目の要素が欲しいとき、その値はもちろん`0`です。同様に1番目の値は1です。問題は2番目以降の値を取得する時ですね。
 
 1番目までしか値が分かっていないとき、fibsは
 
-{% codeblock %}
+```
 fibs = [0 1 ...]
 (rest fibs) = [1 ...]
-{% endcodeblock %}
+```
 
 ...の部分が未確定部分です。
 
 `(map + (rest fibs) fibs)`の最初の計算では`(rest fibs)`と`fibs`の0番目の要素同士を足し算するので`1+0=1`となり、`fibs`の2番目の値が確定します。
 
-{% codeblock %}
+```
 fibs = [0 1 1 ...]
 (rest fibs) = [1 1 ...]
-{% endcodeblock %}
+```
 
 `(map + (rest fibs) fibs)`の2回目の計算では`(rest fibs)`と`fibs`の1番目の要素同士を足し算するので`1+1=2`となり、`fibs`の3番目の値が確定します。
 
-{% codeblock %}
+```
 fibs = [0 1 1 2...]
 (rest fibs) = [1 1 2...]
-{% endcodeblock %}
+```
 
 以降同じことの繰り返しです。`fibs`の要素はその値が必要になるまで計算されない(遅延評価なので当然)ので、先のワンライナーの`fibs`の定義だけで無限に続くフィボナッチ数列を全て表現できています。
 

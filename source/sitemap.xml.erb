@@ -1,0 +1,10 @@
+<% pages = sitemap.resources.find_all{|p| p.url.match(/(\.md|\.html)$/) } %>
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<% pages.each do |p| %>
+  <url>
+    <loc>http://k2nr.me/<%=p.destination_path.gsub('/index.html','')%></loc>
+    <lastmod><%= p.data.date.to_time.iso8601 %></lastmod>
+  </url>
+<% end %>
+</urlset>

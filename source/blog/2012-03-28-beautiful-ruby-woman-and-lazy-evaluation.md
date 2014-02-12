@@ -32,7 +32,7 @@ categories:
 
 それでは彼女は、Rubyで`if`関数を自作したのでしょうか？それは不可能です。Rubyの`if`というのは
 
-{% codeblock lang:ruby %}
+```ruby
 if test then
     state1
     state2
@@ -42,7 +42,7 @@ else
     state4
     ...
 end
-{% endcodeblock %}
+```
 
 こんな形をしていて、そもそも「関数」として扱うことは難しい構造です。ifを関数として扱うためにはまず第一にthenとelseの中身が複数ステートメントによるコードブロックではなく単一の式である(つまり、引数としてif関数に渡せる)必要があります。そして第二に、こちらのほうが重要ですが、言語レベルで[遅延評価][1]を実装していることが求められます。
 
@@ -51,11 +51,11 @@ end
 遅延評価が必要とはどういうことなのか。説明のためにSchemeというlispの方言を用いて自作ifを実装してみましょう。
 (サンプルはまるまる、SICPのExercise 1.6から拝借しました)
 
-{% codeblock lang:scm %}
+```scm
 (define (new-if predicate then-clause else-clause)
   (cond (predicate then-clause)
         (else else-clause)))
-{% endcodeblock %}
+```
 
 使ってみます。
 
@@ -69,22 +69,22 @@ end
 
 動いてますね。でもダメなんです。試しにリストの末尾要素を求める次のコードを実行してみましょう。
 
-{% codeblock lang:scm %}
+```scm
 (define (tail lst)
   (new-if (null? (cdr lst))
           (car lst)
           (tail (cdr lst))))
 
 (tail '(1 2 3 4))
-{% endcodeblock %}
+```
 
 エラーが出てしまいますね。`new-if`を`if`に変えたら正しく動きます。これが遅延評価が必要である理由です。デフォルト遅延評価ではないSchemeのような言語では、if関数呼び出しの前にthen-clauseもelse-clauseも評価されてしまいます。その結果、上記の例では`lst`が`(4)`のとき(`(null? (cdr lst))`が真のとき)に本来評価不要であるはずのelseルートの再帰呼び出しを実行してしまったのです。
 
 それでは、先のif関数実装のための条件を満たした言語の一例としてHaskellで実装してみましょう。
 
-{% codeblock lang:hs %}
+```hs
 myif predicate then_clause else_clause = if predicate then then_clause else else_clause
-{% endcodeblock %}
+```
 
 このmyif関数は完璧に正しく動きます。なぜなら実行されない側(predicateがTrueならelse_clause、Falseならthen_clause)は評価されないからです。
 

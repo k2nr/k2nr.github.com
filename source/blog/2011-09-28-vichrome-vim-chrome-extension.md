@@ -25,9 +25,9 @@ categories:
 
 ## Vichromeって？
 
-{%img right https://github.com/k2nr/ViChrome/raw/master/images/screenshot01.png 200 %}
-{%img right https://github.com/k2nr/ViChrome/raw/master/images/screenshot02.png 200 %}
-{%img right https://github.com/k2nr/ViChrome/raw/master/images/screenshot04.png 200 %}
+![](https://github.com/k2nr/ViChrome/raw/master/images/screenshot01.png)
+![](https://github.com/k2nr/ViChrome/raw/master/images/screenshot02.png)
+![](https://github.com/k2nr/ViChrome/raw/master/images/screenshot04.png)
 
 viライクな操作をChromeで実現するという比較的ありがちな、VimperatorマジリスペクトなGoogle Chromeエクステンションです。
 
@@ -42,7 +42,7 @@ viライクな操作をChromeで実現するという比較的ありがちな、
 ## 他エクステンションと比較
 ### <a href="https://chrome.google.com/webstore/detail/dbepggeogbaibhgnhhndojpepiihcmeb?hc=search&amp;hcp=main">vimium</a>
 
-{%img http://4.bp.blogspot.com/LlQsxIptGBvGks_aEeu9cQHrnVUxnpfDCvhvXyA-994O62Pg3Hn-daUVcv7mK0vDVb0R-_u4wjs=s128-h128-e365 64 %}
+![](http://4.bp.blogspot.com/LlQsxIptGBvGks_aEeu9cQHrnVUxnpfDCvhvXyA-994O62Pg3Hn-daUVcv7mK0vDVb0R-_u4wjs=s128-h128-e365)
 
 素晴らしいエクステンションです。必要なキーバインドは大体網羅してあるしストアの好評価も納得**ただし日本語使えません。**検索、ブックマーク操作等で日本語が使えません。もはやこれ以上の比較は不要でしょう *because we are Japanese*。
 
@@ -56,7 +56,7 @@ viライクな操作をChromeで実現するという比較的ありがちな、
 
 ### <a href="https://chrome.google.com/webstore/detail/godjoomfiimiddapohpmfklhgmbfffjj?hc=search&amp;hcp=main">Vrome</a>
 
-{%img http://3.bp.blogspot.com/IgI9d_uaMu3mr_KPUnV-FmPLglzBXXAi-lU2ZNK6ZRpDk49TjZLNK5mQo6aGYwneX6c6QwwL-Q=s128-h128-e365 64 %}
+![](http://3.bp.blogspot.com/IgI9d_uaMu3mr_KPUnV-FmPLglzBXXAi-lU2ZNK6ZRpDk49TjZLNK5mQo6aGYwneX6c6QwwL-Q=s128-h128-e365)
 
 vimiumと同程度のキーバインドが用意されていて中々使いやすいエクステンションです。しかも日本語使えます。
 ただし、こいつは設定をカスタマイズするには**自前でlocalhostのサーバーを立てなければなりません。**
@@ -72,7 +72,7 @@ Chrome Extensionではローカルなファイルシステムに直接アクセ�
 
 ### <a href="https://chrome.google.com/webstore/detail/okneonigbfnolfkmfgjmaeniipdjkgkl?hc=search&amp;hcp=main">Chrome Keyconfig</a>
 
-{%img http://4.bp.blogspot.com/9j9KuBTtntJt7SxNOibqh6aVrd8RVCnN3a4WBDLhEiY-BzOCTu9lUMimpfPqTsd4Jk0uLblDug=s32-h32-e365 64 %}
+![](http://4.bp.blogspot.com/9j9KuBTtntJt7SxNOibqh6aVrd8RVCnN3a4WBDLhEiY-BzOCTu9lUMimpfPqTsd4Jk0uLblDug=s32-h32-e365)
 
 このエクステンションは今までのものとは目的が違いますが、viモードもあるので一応。
 

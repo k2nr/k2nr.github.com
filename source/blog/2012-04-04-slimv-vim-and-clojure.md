@@ -87,14 +87,14 @@ $ vim src/helloworld/core.clj
 何か書いてみましょう。僕がいつも使う例で末尾要素を求める`tail`関数でも実装してみましょうか。
 コピペしないでちゃんと書いて下さいね。
 
-{% codeblock lang:clj %}
+```clj
 (ns helloworld.core)
 
 (defn tail [lst]
   (if (empty? (rest lst))
     (first lst)
     (recur (rest lst))))
-{% endcodeblock %}
+```
 
 さて、書いてる段階で既にslimv.vimのパワーを感じたんじゃないでしょうか。多分以下の機能が動いてたと思います。
 
@@ -114,7 +114,7 @@ $ vim src/helloworld/core.clj
 
 修正後のソースです。
 
-{% codeblock lang:clj %}
+```clj
 (ns helloworld.core)
 
 (defn tail [lst]
@@ -123,7 +123,7 @@ $ vim src/helloworld/core.clj
     (if (empty? (rest lst))
       (first lst)
       (recur (rest lst)))))
-{% endcodeblock %}
+```
 
 ちょっと待てよ。clojure組み込みの`last`関数は`'()`が渡されたら`nil`を返しますね。やっぱり元の関数に戻しましょう。
 まず追加したifの行で`dd`しましょう。おや？括弧が一つ消えてないですね。これはslimv.vimが常に対応する括弧を必要とするため、閉じ括弧を残した状態で開き括弧だけ消すことができないからです。(Pareditモードといって、設定でOFFにすることもできます)
