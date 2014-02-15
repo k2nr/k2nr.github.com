@@ -10,6 +10,7 @@ script:
     - bundle exec middleman build
 after_success:
     - cd build
+    - cp ../.travis.yml .
     - git init
     - git add --all
     - git commit -m "updated by Travis CI"
