@@ -1,7 +1,6 @@
 ---
 title: "octopressからmiddlemanにblogシステム移行した"
 date: 2014-02-16
-tags: octopress, middleman
 ---
 
 octopressは色々不満があって
