@@ -3,7 +3,7 @@ task :post, [:title] do |task, args|
   date_s = sprintf("%04d-%02d-%02d %02d:%02d:%02d", t.year, t.month, t.day, t.hour, t.min, t.sec)
   template = <<-EOS
 ---
-title: #{args.title}
+title: "#{args.title}"
 date: "#{date_s}"
 ---
   EOS
