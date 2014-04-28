@@ -10,5 +10,5 @@ date: \\"#{date_s}\\"
 
   filepath = sprintf("source/blog/%02d-%02d-%02d-%s.md", t.year, t.month, t.day, args.title)
   `echo "#{template}" > #{filepath}`
-  puts "file created: #{filepath}"
+  puts filepath
 end
