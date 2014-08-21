@@ -3,6 +3,7 @@ title: "Dockerにおけるマルチホストでのコンテナ間リンク考察
 date: "2014-08-21 21:09:35"
 ---
 
+最近dockerの事ばかり考えてます。
 マルチホストでdockerを運用する際、真っ先にぶちあたる問題はコンテナ間の連携をどのようにして実現するか、あるいは広義にはService Discoveryをいかにして実現するか、ということだ。
 
 いろいろ調べたり作ったりした結果わかったことをまとめておく。
@@ -105,7 +106,7 @@ curl -XPUT http://127.0.0.1:4001/v2/keys/skydns/local/skydns/east/production/rai
     -d value='{"host":"service1.example.com","port":8080}'
 ```
 
-手順としては
+ちょうどいい実装が見つからなかったので、あくまで想像だが実現する手順としては
 
 1. このskydnsを各ホストで起動しておき、
 2. 各ホストで起動するコンテナのdnsを`docker run`の`--dns`オプションでlocalhostのskydnsに向けるようにする。
