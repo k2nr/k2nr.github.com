@@ -1,3 +1,8 @@
+---
+title: Vichrome
+date: "2014-10-06 22:23:50"
+---
+
 # Vichrome
 
 ## 概要
