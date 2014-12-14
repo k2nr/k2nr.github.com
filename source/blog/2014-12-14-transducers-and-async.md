@@ -5,7 +5,7 @@ date: "2014-12-14 22:22:47"
 
 これは[Clojure Advent Calendar](http://qiita.com/advent-calendar/2014/clojure)の14日目です。
 
-Transducders自体に関しての説明はRich本人の説明が素晴らしいし、僕も以前ブログで言及したので省略します。
+Transducders自体に関しての説明はRich本人の説明が素晴らしいし、僕も以前ブログで言及したので省略します。ついでに`core.async`も基本的な使い方は理解している前提で記事を書きます。
 
 - [TRANSDUCERS ARE COMING](http://blog.cognitect.com/blog/2014/8/6/transducers-are-coming)
 - ["Transducers" by Rich Hickey](https://www.youtube.com/watch?v=6mTbuzafcII)
@@ -13,7 +13,7 @@ Transducders自体に関しての説明はRich本人の説明が素晴らしい�
 - [Clojure1.7のtransducersとはなにか](http://k2nr.me/blog/2014/08/10/transducers.html)
 - [clojure1.7のtransducersの中身を見てみる](http://k2nr.me/blog/2014/08/11/transducers-2.html)
 
-一番上の記事で`core.async`でもtransducersが使えるようになるよ、って書いてあったので使ってみた記録です。
+一番上のCognitectの記事で「`core.async`でもtransducersが使えるようになるよ」って書いてあったので使ってみた記録です。
 
 **以降の内容は`clojure "1.7.0-alpha4"`と`core.async  "0.1.346.0-17112a-alpha"`をもとにしています。**
 
@@ -71,8 +71,8 @@ transducersの特徴を活かしてfiltering transducer使ったり、関数合�
 
 ```
 
-まあ普通のtransducersと変わらないですね。便利ですね。
-`core.async`でも普通のtransducersと同じように使えるっていうのはすごい重要なことだと思います。
+まあ使い方は普通のtransducersと変わらないですね。便利ですね。
+`core.async`でも`core`ライブラリと同じようにtransducersが使えるっていうのはすごい重要なことだと思います。
 
 transducersが基本のビルディングブロックとして確立されたclojureの未来が楽しみですね。
 
