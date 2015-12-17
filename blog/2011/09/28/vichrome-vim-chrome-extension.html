@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>Vichrome : vim風インタフェースを実現するChrome Extension</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2011 blog_2011_09 blog_2011_09_28 blog_2011_09_28_vichrome-vim-chrome-extension">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>Vichrome : vim風インタフェースを実現するChrome Extension</h1>
+      <time datetime="2011-09-28" pubdate>Sep 28, 2011</time>
+    </header>
+    <p><span style="color: blue;">
+[11/10/18]
+この記事でVichromeを始めて知るという方も多いようなので、現在の最新バージョンの情報を下部に加筆しました。
+</span></p>
+
+<p><img alt="Vichrome icon" src="http://3.bp.blogspot.com/-znVUKjoHsnw/ToMAQ9EvSTI/AAAAAAAAAHE/2yH3d7trWhg/s1600/128.png" />
+<a href="https://chrome.google.com/webstore/detail/gghkfhpblkcmlkmpcpgaajbbiikbhpdi">Vichrome</a></span>（<a href="https://github.com/k2nr/ViChrome/wiki/Vichrome-User-Manual">ユーザーマニュアルはこちら</a>）</p>
+
+<p>ここ最近こっそり開発してたのがこれ。
+さあ君も今すぐインストール！</p>
+
+<h2 id="vichromeって？">Vichromeって？</h2>
+
+<p><img src="https://github.com/k2nr/ViChrome/raw/master/images/screenshot01.png" />
+<img src="https://github.com/k2nr/ViChrome/raw/master/images/screenshot02.png" />
+<img src="https://github.com/k2nr/ViChrome/raw/master/images/screenshot04.png" /></p>
+
+<p>viライクな操作をChromeで実現するという比較的ありがちな、VimperatorマジリスペクトなGoogle Chromeエクステンションです。</p>
+
+<p>実はChromeのエクステンションには既に似た様なものがいくつかあるのですが僕の要求を100%満たせるものは存在しないようです。
+しかし、それでもvimmerな僕としてはWebブラウジングでマウスを極力使いたくないという思いがあります。
+で、それならいっそ作ってしまえということで開発したのが<a href="https://chrome.google.com/webstore/detail/gghkfhpblkcmlkmpcpgaajbbiikbhpdi">Vichrome</a>というわけです。</p>
+
+<p>ということで今日は<a href="https://chrome.google.com/webstore/detail/gghkfhpblkcmlkmpcpgaajbbiikbhpdi">Vichrome</a>の紹介をします。自分のために作ったとは言いつつも予想外の出来と将来性に本人が驚いてるので、できれば多くの人に使ってもらってフィードバックを貰いたいという魂胆です。</p>
+
+<p>さて、基本的な操作はリンク先のChromeウェブストアを参照してもらうとして（英語ですが）ここでは先人たちが開発した類似エクステンションとVichromeを比較することでVichromeの優位性をアピールします。</p>
+
+<h2 id="他エクステンションと比較">他エクステンションと比較</h2>
+
+<h3 id="vimium"><a href="https://chrome.google.com/webstore/detail/dbepggeogbaibhgnhhndojpepiihcmeb?hc=search&amp;hcp=main">vimium</a></h3>
+
+<p><img src="http://4.bp.blogspot.com/LlQsxIptGBvGks_aEeu9cQHrnVUxnpfDCvhvXyA-994O62Pg3Hn-daUVcv7mK0vDVb0R-_u4wjs=s128-h128-e365" /></p>
+
+<p>素晴らしいエクステンションです。必要なキーバインドは大体網羅してあるしストアの好評価も納得<strong>ただし日本語使えません。</strong>検索、ブックマーク操作等で日本語が使えません。もはやこれ以上の比較は不要でしょう <em>because we are Japanese</em>。</p>
+
+<p>ついでに付け加えるなら</p>
+
+<ul>
+<li>window右下に表示される現在モードを示すポップアップが消せない</li>
+<li>コマンドを直接入力して何か機能をキックするような仕組みが存在しない</li>
+<li>日本語環境が考慮されておらずMac以外の日本語環境では一部のキーが使用できない</li>
+</ul>
+
+<p>などなど、まあ日本語を使えないことに比べれば些細な話です。</p>
+
+<h3 id="vrome"><a href="https://chrome.google.com/webstore/detail/godjoomfiimiddapohpmfklhgmbfffjj?hc=search&amp;hcp=main">Vrome</a></h3>
+
+<p><img src="http://3.bp.blogspot.com/IgI9d_uaMu3mr_KPUnV-FmPLglzBXXAi-lU2ZNK6ZRpDk49TjZLNK5mQo6aGYwneX6c6QwwL-Q=s128-h128-e365" /></p>
+
+<p>vimiumと同程度のキーバインドが用意されていて中々使いやすいエクステンションです。しかも日本語使えます。
+ただし、こいつは設定をカスタマイズするには<strong>自前でlocalhostのサーバーを立てなければなりません。</strong>
+Chrome Extensionではローカルなファイルシステムに直接アクセスできないから苦肉の策でサーバーという解決策を選んだのでしょうが、正直なところ大袈裟だしめんどくさいと感じます。</p>
+
+<p>他には</p>
+
+<ul>
+<li>検索結果のハイライトが消せない</li>
+<li>HIT-A-HINTの候補に使えるキーをカスタマイズできない</li>
+<li><span style="font-size: xx-small;">アイコンがださい</span></li>
+</ul>
+
+<p>などなど。</p>
+
+<h3 id="chrome-keyconfig"><a href="https://chrome.google.com/webstore/detail/okneonigbfnolfkmfgjmaeniipdjkgkl?hc=search&amp;hcp=main">Chrome Keyconfig</a></h3>
+
+<p><img src="http://4.bp.blogspot.com/9j9KuBTtntJt7SxNOibqh6aVrd8RVCnN3a4WBDLhEiY-BzOCTu9lUMimpfPqTsd4Jk0uLblDug=s32-h32-e365" /></p>
+
+<p>このエクステンションは今までのものとは目的が違いますが、viモードもあるので一応。</p>
+
+<ul>
+<li>一部の機能（とくに検索）を割り当てられない</li>
+<li>googleの検索結果のページではまともに機能しない（Chromeのバージョンは14.0.835.186）</li>
+<li>カスタマイズがvimっぽくない（nmap/imapとか使いたい）</li>
+</ul>
+
+<p>決してこれらのエクステンションをdisってるわけではなく、それぞれ素晴らしいエクステンションだけど僕の求めるものとはマッチしないよ、というだけの話なので誤解なきよう。</p>
+
+<h2 id="じゃあvichromeはどうなの？">じゃあVichromeはどうなの？</h2>
+
+<p>上で挙げた不満は全て解消しました。</p>
+
+<h3 id="日本語使えます">日本語使えます</h3>
+
+<p>とりあえず現状では使う機会は検索機能だけですが、当然日本語使えます<em>because I am Japanese</em>。</p>
+
+<h3 id="コマンドが直接入力できるコマンドモードを実装">コマンドが直接入力できるコマンドモードを実装</h3>
+<pre class="highlight plaintext"><code>:Open http://www.google.com
+:OpenNewTab http://www.google.com
+</code></pre>
+
+<p>とか、引数が使えるコマンドもいくつかあります。&ndash;
+全てのキーバインドはコマンドのショートカットとして実装しているので例えば</p>
+<pre class="highlight plaintext"><code>:ScrollDown
+</code></pre>
+
+<p>とかやると、jを押したのと同じ動作をします。</p>
+
+<h3 id="設定はvichromeのオプションページから">設定はVichromeのオプションページから</h3>
+
+<p>確かに<code>~/.vichromerc</code>から読み込むというのはvimらしさという点で理想ですが、あくまでChrome ExtensionなのでChrome内で完結させることを優先させました。</p>
+
+<p>設定項目は</p>
+
+<ul>
+<li>incremental search</li>
+<li>wrap scan</li>
+<li>ignore case</li>
+</ul>
+
+<p>といった検索関連設定、f-Modeの候補キーの設定、そして当然キーマップの設定も出来ます。</p>
+<pre class="highlight plaintext"><code>nmap &lt;C-f&gt; &lt;Nop&gt;
+nmap &lt;A-f&gt; :PageDown&lt;/pre&gt;
+</code></pre>
+
+<p>と設定すれば、<code>&lt;C-f&gt;</code>はChromeのデフォルトが有効になり、もともと<code>&lt;C-f&gt;</code>に設定されていたPageDownは<code>Alt+f</code>で動くようになります。引数付きのコマンドもキーに割り当てられるので、例えばキー設定で</p>
+<pre class="highlight plaintext"><code>nmap &lt;Space&gt;g :OpenNewTab http://www.google.com
+</code></pre>
+
+<p>と設定すれば、スペースキーとgキーを連続で押すことで新しいタブでgoogle.comが開くようになります。</p>
+
+<h3 id="continuous-f-mode（連続hit-a-hint）">continuous f-Mode（連続HIT-A-HINT）</h3>
+
+<p>個人的にどうしても欲しかった機能がこれ。</p>
+
+<p>VichromeではHIT-A-HINT相当の機能をf-Modeと呼んでますが、まあつまりHIT-A-HINTです。
+continuous f-Modeとは要するに、HINTをHITしてもHIT-A-HINTが終了しないということです。HITされたリンクはバックグラウンドで新しいタブに開くけど、まだHINTは表示されたままでさらに連続してHITすることでいくつものリンクを連続して開くことができます。</p>
+
+<p>この機能、かなり特殊かつ個人的な需要なのでデフォルトではキーにマッピングされていません。使う場合はキーマッピングの設定に</p>
+<pre class="highlight plaintext"><code>nmap F :GoFMode --newtab --continuous
+</code></pre>
+
+<p>という設定を追加する必要があります。</p>
+
+<h3 id="ぜひ試してみてください">ぜひ試してみてください</h3>
+
+<p>まだ全然完成してなくて今後も継続して開発しますが、もしあなたの趣味が僕の思考回路にマッチしていたなら現段階でもベストチョイスなエクステンションだと思います。</p>
+
+<p>本当はこんなアピールよりもJavascriptを使ったことがない状態からこんなごっついエクステンションの開発を始めてしまった苦労話を話したいのだけれど、それはまた次回。</p>
+
+<hr>
+
+<h3 id="11-10-18加筆">[11/10/18加筆]</h3>
+
+<p>Vichromeの最新の機能について以下の記事に書いてるので参照してね。</p>
+
+<ul>
+<li><a href="/blog/2011/10/11/vichrome-0-4-1/">Vichrome 0.4.1リリースしたので紹介</a></li>
+<li><a href="/blog/2011/10/11/vichrome-0-6-0/">Vichromeバージョン0.6.0をリリースしたので紹介。</a></li>
+</ul>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

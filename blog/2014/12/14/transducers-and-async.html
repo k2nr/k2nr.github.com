@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>transducersとcore.async</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2014 blog_2014_12 blog_2014_12_14 blog_2014_12_14_transducers-and-async">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>transducersとcore.async</h1>
+      <time datetime="2014-12-14" pubdate>Dec 14, 2014</time>
+    </header>
+    <p>これは<a href="http://qiita.com/advent-calendar/2014/clojure">Clojure Advent Calendar</a>の14日目です。</p>
+
+<p>Transducders自体に関しての説明はRich本人の説明が素晴らしいし、僕も以前ブログで言及したので省略します。ついでに<code>core.async</code>も基本的な使い方は理解している前提で記事を書きます。</p>
+
+<ul>
+<li><a href="http://blog.cognitect.com/blog/2014/8/6/transducers-are-coming">TRANSDUCERS ARE COMING</a></li>
+<li><a href="https://www.youtube.com/watch?v=6mTbuzafcII">&ldquo;Transducers&rdquo; by Rich Hickey</a></li>
+<li><a href="https://www.youtube.com/watch?v=4KqUvG8HPYo&amp;amp;list=PLZdCLR02grLoc322bYirANEso3mmzvCiI&amp;amp;index=8">Rich Hickey - Inside Transducers</a></li>
+<li><a href="http://k2nr.me/blog/2014/08/10/transducers.html">Clojure1.7のtransducersとはなにか</a></li>
+<li><a href="http://k2nr.me/blog/2014/08/11/transducers-2.html">clojure1.7のtransducersの中身を見てみる</a></li>
+</ul>
+
+<p>一番上のCognitectの記事で「<code>core.async</code>でもtransducersが使えるようになるよ」って書いてあったので使ってみた記録です。</p>
+
+<p><strong>以降の内容は<code>clojure &quot;1.7.0-alpha4&quot;</code>と<code>core.async  &quot;0.1.346.0-17112a-alpha&quot;</code>をもとにしています。</strong></p>
+
+<p><code>core.async</code>では、以下のようにして<code>chan</code>関数がtransducerを受け取ることができます。</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="nf">require</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="n">clojure.core.async</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">async</span><span class="p">])</span><span class="w">
+
+</span><span class="c1">; 第1引数がチャンネルのバッファサイズ、第2引数がtransducer
+</span><span class="p">(</span><span class="nf">async/chan</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">inc</span><span class="p">))</span><span class="w">
+</span></code></pre>
+
+<p>こうすると、チャンネルに<code>put!</code>された値が、取り出すときにtransducerで加工されます。</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="p">(</span><span class="nf">async/chan</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">inc</span><span class="p">)))</span><span class="w">
+</span><span class="p">(</span><span class="nf">async/onto-chan</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">async/&lt;!!</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="c1">; =&gt; 1
+</span><span class="p">(</span><span class="nf">async/&lt;!!</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="c1">; =&gt; 2
+</span><span class="p">(</span><span class="nf">async/&lt;!!</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="c1">; =&gt; 3
+; ...
+</span></code></pre>
+
+<p>これだけなら、<code>core.async/map</code>関数を使えば似たようなことが簡単に実現できます</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">c1</span><span class="w"> </span><span class="p">(</span><span class="nf">async/chan</span><span class="p">))</span><span class="w">
+</span><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">c2</span><span class="w"> </span><span class="p">(</span><span class="nf">async/map</span><span class="w"> </span><span class="nb">inc</span><span class="w"> </span><span class="p">[</span><span class="n">c1</span><span class="p">]))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">async/onto-chan</span><span class="w"> </span><span class="n">c1</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">async/&lt;!!</span><span class="w"> </span><span class="n">c2</span><span class="p">)</span><span class="w"> </span><span class="c1">; =&gt; 1
+</span><span class="p">(</span><span class="nf">async/&lt;!!</span><span class="w"> </span><span class="n">c2</span><span class="p">)</span><span class="w"> </span><span class="c1">; =&gt; 2
+</span><span class="p">(</span><span class="nf">async/&lt;!!</span><span class="w"> </span><span class="n">c2</span><span class="p">)</span><span class="w"> </span><span class="c1">; =&gt; 3
+</span></code></pre>
+
+<p>transducersの特徴を活かしてfiltering transducer使ったり、関数合成したりしてみます。</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">xform</span><span class="w"> </span><span class="p">(</span><span class="nb">comp</span><span class="w">
+            </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">inc</span><span class="p">)</span><span class="w">
+            </span><span class="p">(</span><span class="nb">filter</span><span class="w"> </span><span class="n">even?</span><span class="p">)</span><span class="w">
+            </span><span class="p">(</span><span class="nb">drop</span><span class="w"> </span><span class="mi">3</span><span class="p">)))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="p">(</span><span class="nf">async/chan</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">xform</span><span class="p">))</span><span class="w">
+</span><span class="p">(</span><span class="nf">async/onto-chan</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">async/&lt;!!</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="c1">; =&gt; 8
+</span><span class="p">(</span><span class="nf">async/&lt;!!</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="c1">; =&gt; 10
+</span><span class="p">(</span><span class="nf">async/&lt;!!</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="c1">; =&gt; 12
+; ...
+</span><span class="w">
+</span></code></pre>
+
+<p>まあ使い方は普通のtransducersと変わらないですね。便利ですね。
+<code>core.async</code>でも<code>core</code>ライブラリと同じようにtransducersが使えるっていうのはすごい重要なことだと思います。</p>
+
+<p>transducersが基本のビルディングブロックとして確立されたclojureの未来が楽しみですね。</p>
+
+<p>正式リリースはまだ先ですが、みなさんも積極的にtransducersとcore.async使っていきましょう。</p>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

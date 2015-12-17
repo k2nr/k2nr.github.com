@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>clojure1.7のtransducersの中身を見てみる</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2014 blog_2014_08 blog_2014_08_11 blog_2014_08_11_transducers-2">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>clojure1.7のtransducersの中身を見てみる</h1>
+      <time datetime="2014-08-11" pubdate>Aug 11, 2014</time>
+    </header>
+    <p><a href="http://k2nr.me/blog/2014/08/10/transducers.html">続き</a>。</p>
+
+<p>もう少しtransducersの中身を見ていきます。</p>
+
+<p>まず、前に取り上げた<code>map</code>ですが、実際のコードは<a href="https://github.com/clojure/clojure/blob/2a09172e0c3285ccdf79d1dc4d399d190678b670/src/clj/clojure/core.clj#L2554">こうなってます</a>。
+(transducerの部分のみ抜粋)</p>
+<pre class="highlight clojure"><code><span class="w">  </span><span class="p">([</span><span class="n">f</span><span class="p">]</span><span class="w">
+    </span><span class="p">(</span><span class="k">fn</span><span class="w"> </span><span class="p">[</span><span class="n">f1</span><span class="p">]</span><span class="w">
+      </span><span class="p">(</span><span class="k">fn</span><span class="w">
+        </span><span class="p">([]</span><span class="w"> </span><span class="p">(</span><span class="nf">f1</span><span class="p">))</span><span class="w">
+        </span><span class="p">([</span><span class="n">result</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="nf">f1</span><span class="w"> </span><span class="n">result</span><span class="p">))</span><span class="w">
+        </span><span class="p">([</span><span class="n">result</span><span class="w"> </span><span class="n">input</span><span class="p">]</span><span class="w">
+           </span><span class="p">(</span><span class="nf">f1</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="p">(</span><span class="nf">f</span><span class="w"> </span><span class="n">input</span><span class="p">)))</span><span class="w">
+        </span><span class="p">([</span><span class="n">result</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">inputs</span><span class="p">]</span><span class="w">
+           </span><span class="p">(</span><span class="nf">f1</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="p">(</span><span class="nb">apply</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="n">inputs</span><span class="p">))))))</span><span class="w">
+</span></code></pre>
+
+<p><code>map</code>は、関数を返す関数を返す関数です。(<code>map</code>にかぎらず、transducerを返す関数はもちろんそうです)
+<code>f</code>は<code>map</code>の第一引数、mapping functionです。で、<code>f1</code>がtransducerの入力となるreducing functionです。transducerはreducing functionを入力に受けて、別のreducing functionを返す関数なので、<code>f1</code>はこの入力にあたります。</p>
+
+<p>一番大事っぽい部分は2引数を受け取る</p>
+<pre class="highlight clojure"><code><span class="p">([</span><span class="n">result</span><span class="w"> </span><span class="n">input</span><span class="p">]</span><span class="w">
+           </span><span class="p">(</span><span class="nf">f1</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="p">(</span><span class="nf">f</span><span class="w"> </span><span class="n">input</span><span class="p">)))</span><span class="w">
+</span></code></pre>
+
+<p>の部分ですね。元のreducing function<code>f1</code>に<code>result</code>と、<code>input</code>をmapping function<code>f</code>で変換した値を渡しています。</p>
+
+<p>これがmapping transducerです。</p>
+
+<p>ではもう一つ、<code>drop</code>を見てみます。</p>
+
+<p><code>drop</code>は従来は</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="nb">drop</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">])</span><span class="w">
+</span><span class="c1">; =&gt; (2 3)
+</span></code></pre>
+
+<p>第一引数の数だけ第二引数のシーケンスの先頭から取り除いたシーケンスを返す関数なのですが、第二引数が省略されるとtransducerを返します。dropping transducerと呼ぶのでしょうか。</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="p">(</span><span class="nb">drop</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">sequence</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">])</span><span class="w">
+</span><span class="c1">; =&gt; (2 3)
+</span></code></pre>
+
+<p>コードは<a href="https://github.com/clojure/clojure/blob/2a09172e0c3285ccdf79d1dc4d399d190678b670/src/clj/clojure/core.clj#L2714">こんな感じ</a>。</p>
+<pre class="highlight clojure"><code><span class="w">  </span><span class="p">([</span><span class="n">n</span><span class="p">]</span><span class="w">
+     </span><span class="p">(</span><span class="k">fn</span><span class="w"> </span><span class="p">[</span><span class="n">f1</span><span class="p">]</span><span class="w">
+       </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">na</span><span class="w"> </span><span class="p">(</span><span class="nf">atom</span><span class="w"> </span><span class="n">n</span><span class="p">)]</span><span class="w">
+         </span><span class="p">(</span><span class="k">fn</span><span class="w">
+           </span><span class="p">([]</span><span class="w"> </span><span class="p">(</span><span class="nf">f1</span><span class="p">))</span><span class="w">
+           </span><span class="p">([</span><span class="n">result</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="nf">f1</span><span class="w"> </span><span class="n">result</span><span class="p">))</span><span class="w">
+           </span><span class="p">([</span><span class="n">result</span><span class="w"> </span><span class="n">input</span><span class="p">]</span><span class="w">
+              </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">n</span><span class="w"> </span><span class="err">@</span><span class="n">na</span><span class="p">]</span><span class="w">
+                </span><span class="p">(</span><span class="nf">swap!</span><span class="w"> </span><span class="n">na</span><span class="w"> </span><span class="nb">dec</span><span class="p">)</span><span class="w">
+                </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">pos?</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w">
+                  </span><span class="n">result</span><span class="w">
+                  </span><span class="p">(</span><span class="nf">f1</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="n">input</span><span class="p">))))))))</span><span class="w">
+</span></code></pre>
+
+<p>これはちょっとおもしろいですね。
+<code>drop</code>の第一引数を<code>atom</code>で<code>na</code>にとっておいて、dropping transducerによって作られるreducing functionは呼ばれる度に<code>na</code>を-1していきます。<code>na</code>が正数の間はreducing function<code>f1</code>を適用せずに<code>result</code>をそのまま返すことで、<code>drop</code>の動きを実現しています。</p>
+
+<p><code>drop</code>以外にも<code>take-nth</code>とか、長さを変える系のtransducerはこういう仕組みになってます。</p>
+
+<p>transducerを受け取ってtransduceする側の関数も紹介しようかと思ったけどここで力尽きた</p>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

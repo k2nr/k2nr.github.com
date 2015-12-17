@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>マクロ機能が存在すればいいというわけではない</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2014 blog_2014_09 blog_2014_09_01 blog_2014_09_01_macro">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>マクロ機能が存在すればいいというわけではない</h1>
+      <time datetime="2014-09-01" pubdate>Sep  1, 2014</time>
+    </header>
+    <p>どうもLisp教信者です。</p>
+
+<p>HaskellにはTemplate Haskellありますし、Scalaにもマクロあるらしいですね。確かElixirにもマクロあるという情報を聞いた気がします。
+マクロ、つまり抽象構文木にアクセスする機能を実装している言語ってのはたくさんあるんですが、Lisper的観点から見解を述べます。</p>
+
+<p>プログラミング言語というのはソースコードのコンパイル過程で大体において抽象構文木と呼ばれるデータ構造を中間データとして出力します。
+マクロはこの抽象構文木にアクセスして書き換えを可能とすることで、普通にコード書いてたんじゃ実現できないような機能を(ある意味コンパイラ機能を拡張することで)実現できます。</p>
+
+<p>で、ソースコードから出力された抽象構文木にアクセスする機能なので、マクロのコードはすごく読みづらいんですね。普通のコードとは違うんです。マクロ専用の書き方がたくさんあるんです(いやあまり詳しくない状態で書いてますが)。詳細は各言語のマクロの書き方を勉強してもらえばと思いますが、その言語に慣れた人からしても新世界としか思えないような世界が広がることでしょう。</p>
+
+<p>一方でLispにおいては、Lispの同図像性(Homoiconicity、いわゆるCode as Data)な性質のおかげで普通のLispコードとマクロの間にあまり差がありません。ただリストのデータを受け取って別のリストを返すだけです。</p>
+
+<p>マクロ機能が存在すれば、Lispに近い、あるいは同等の柔軟性が言語にもたらされます。しかし、それとマクロが書きやすいかどうかというのは別問題です。マクロと普通のコードの書き方が違えば違うほど、学習は大変ですしバグが出た場合のデバッグも大変になります。ハードルが高くなるほど使用者は減るし、それは活かしたライブラリもあまり登場しないでしょう。</p>
+
+<p>Lispにおけるマクロは同図像性の存在と組み合わせることで最大の価値がもたらされるのであってマクロだけを取り出して他言語に適用しても十分な効力は得られません。</p>
+
+<p>本記事は「Lispにはマクロというのがあって&hellip;」という話をしたところ「それHaskellにもScalaにもあるよ」と返されたためカッとなって書きました。</p>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

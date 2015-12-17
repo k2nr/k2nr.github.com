@@ -1,0 +1,197 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>[Vichrome]バージョン0.6.0をリリースしたので紹介。</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2011 blog_2011_10 blog_2011_10_18 blog_2011_10_18_vichrome-0-6-0">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>[Vichrome]バージョン0.6.0をリリースしたので紹介。</h1>
+      <time datetime="2011-10-18" pubdate>Oct 18, 2011</time>
+    </header>
+    <p><img src="http://3.bp.blogspot.com/-znVUKjoHsnw/ToMAQ9EvSTI/AAAAAAAAAHE/2yH3d7trWhg/s1600/128.png" /></p>
+
+<p>Vichromeはvi(vim)風のキー操作を実現するGoogle Chrome Extensionです。</p>
+
+<ul>
+<li>前々回：<a href="/blog/2011/09/28/vichrome-vim-chrome-extension/">Vichrome : vim風インタフェースを実現するChrome Extension</a></li>
+<li>前回：<a href="/blog/2011/10/11/vichrome-0-4-1/">Vichrome 0.4.1リリースしたので紹介</a></li>
+</ul>
+
+<blockquote>
+<p>これから少しの間「VIchromeをCoffeeScriptで作りなおそうプロジェクト」が忙しいので新規機能の実装は少し先になるかもしません。</p>
+</blockquote>
+
+<p>CoffeeScriptへの移植もとっくに完了して既に0.6.0になりました。&ndash;
+そろそろ僕の要求は完全に満たしたので開発ペースも落とそうかと思ってるところ。</p>
+
+<p>では、0.4.2〜0.6.0で追加された新機能の紹介です。</p>
+
+<h2 id="スムーススクロール">スムーススクロール</h2>
+
+<p>スムーススクロールを追加しました。
+特に説明することもないですね。
+ニュルニュル動いて気持ち悪いです。
+僕はずっとONにしてますがvimでggとかやったときにニュルッと動かないことに違和感覚え始めました。</p>
+
+<p>ビジュアル的な部分だけの機能ですが、結構重要なのは、検索とかしてスクロールがいっきに飛ぶような場合に上に行ったのか下に行ったのかが分かりやすくなりました。</p>
+
+<p>デフォルトOFFになってます。使いたい方はONにどうぞ。</p>
+
+<h2 id="補完機能">補完機能</h2>
+
+<p>最大の目玉ですね。
+こいつのおかげで僕はあらゆる操作をVichrome経由で行うようになってしまいました。
+何が補完できるのかと言うと・・・</p>
+
+<ul>
+<li><strong>コマンドモードでのコマンド、エイリアス</strong></li>
+</ul>
+
+<p><img src="http://1.bp.blogspot.com/-6VDXMKjQw_w/Tp126ytPuoI/AAAAAAAAAJI/Ooxhls8FkY8/s320/command.png" /></p>
+
+<p>コマンドも数が増えてきて覚えられ無くなったのでどんなコマンドがあるのか視認できるのはとてもいいことです。</p>
+
+<ul>
+<li><strong>インタラクティブOpenでのWeb履歴、ブックマーク、URL、Googleサジェスト</strong></li>
+</ul>
+
+<p><img src="http://2.bp.blogspot.com/-mVEWrVPNuE0/Tp11QSZFQjI/AAAAAAAAAJA/8NlcY8cAtns/s320/open.png" />
+<img src="http://3.bp.blogspot.com/-Flpp55SLPmQ/Tp127bITvYI/AAAAAAAAAJQ/F7ycvA0w81I/s320/open_google.png" /></p>
+
+<p>補完機能の導入にあたって、コマンドボックスにワードを入力することでURLを補完するインタラクティブオープン機能を追加しています（キーバインドは<code>o</code>、<code>O</code>）。
+補完候補は履歴、ブックマーク、URLが全部表示されます。
+先頭にgを入力した場合のみGoogleサジェストを候補として表示するようになっています。</p>
+
+<p>このインタラクティブオープンは:Openコマンドのオプションとして実装されていて、結構柔軟な仕組みになっています。デフォルトでは以下のようにo、O、s、S、b、Bにそれぞれ機能が割り当てられています。</p>
+<pre class="highlight plaintext"><code># 同一タブオープンで補完候補は全て
+nmap o :Open -i
+# 新規タブオープンで補完候補は全て
+nmap O :OpenNewTab -i
+# 同一タブオープンで補完候補はブックマークのみ
+nmap b :Open -b
+# 新規タブオープンで補完候補はブックマークのみ
+nmap B :OpenNewTab -b
+# 同一タブオープンで補完候補はGoogleサジェストのみ
+nmap s :Open -i g
+# 新規タブオープンで補完候補はGoogleサジェストのみ
+nmap S :OpenNewTab -i g
+</code></pre>
+
+<p>デフォルトでは設定されていませんが、以下のようにすれば履歴のみ補完候補になるような設定も可能です。</p>
+<pre class="highlight plaintext"><code># 同一タブオープンで補完候補は履歴のみ
+nmap h :Open -h
+# 新規タブオープンで補完候補は履歴のみ
+nmap H :OpenNewTab -h
+</code></pre>
+
+<ul>
+<li><strong>サーチモードでの検索履歴</strong></li>
+</ul>
+
+<p><img src="http://1.bp.blogspot.com/-8X65Ee35q8o/Tp129MCKY9I/AAAAAAAAAJc/oYoMfBdFjEw/s320/search.png" /></p>
+
+<p>検索モードでは過去の検索履歴が補完候補となります。</p>
+
+<ul>
+<li><strong>オープン中のタブリスト</strong></li>
+</ul>
+
+<p><img src="http://4.bp.blogspot.com/-NTYxmPbE92A/Tp129sDKClI/AAAAAAAAAJk/JGFI9hKzCLY/s320/tablist.png" /></p>
+
+<p>0.6.0で<code>:ShowTabList</code>というコマンドを追加しました。
+これにより現在同一ウィンドウ内でオープンされているタブの一覽を表示して、選択することでそのタブに移動できるようになりました。</p>
+
+<ul>
+<li><strong>Migemo</strong></li>
+</ul>
+
+<p>0.6.0の目玉機能といえばこれ。
+migemoの説明についてはgoogleさんに譲るとして、検索モードでMigemoを有効にしました。検索マジ超快適。
+デフォルトはOFFです。</p>
+
+<ul>
+<li><strong>Readabilityのサポート</strong></li>
+</ul>
+
+<p>有名なエクステンション、<a href="https://chrome.google.com/webstore/detail/jggheggpdocamneaacmfoipeehedigia?hl=ja">Readability Redux</a>と連携できるようにしました。
+コマンド<code>:Readability</code>を実行するとReadabilityが起動します。
+当然、<a href="https://chrome.google.com/webstore/detail/jggheggpdocamneaacmfoipeehedigia?hl=ja">Readability Redux</a>がインストールされてなければ使えません。</p>
+
+<ul>
+<li><strong>vim compatible感を強化</strong></li>
+</ul>
+
+<p>特にタブ周りについて、vimっぽいコマンド（エイリアス）を多数追加しました。
+全部挙げると：<code>tabe</code> <code>tabc</code> <code>tabo</code> <code>tabn</code> <code>tabp</code> <code>tabN</code> <code>tabr</code> <code>tabl</code> <code>tabs</code> <code>q</code></p>
+
+<p><code>:q</code>なんかは使う人はよく使うコマンドじゃないでしょうか。
+僕は基本的にChrome終了しないから不要だけど。</p>
+
+<p>その他、多数の細かい改良を施してます。
+まだインストールされてない方は一度御試しあれ。</p>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

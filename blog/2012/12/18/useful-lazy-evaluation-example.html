@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>遅延評価でフィボナッチ数列</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2012 blog_2012_12 blog_2012_12_18 blog_2012_12_18_useful-lazy-evaluation-example">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>遅延評価でフィボナッチ数列</h1>
+      <time datetime="2012-12-18" pubdate>Dec 18, 2012</time>
+    </header>
+    <p>遅延評価を使えばこういう風にフィボナッチ数列を表現できるよ、という話。</p>
+
+<p>普通は(正格評価の場合)、次のような求め方をしますね。</p>
+<pre class="highlight c"><code><span class="kt">int</span> <span class="nf">fib</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>DP使えば別の方法ももちろんありますが、省きます。</p>
+
+<p>遅延評価を使って書くと、次のように書けます。Clojureです。</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">fibs</span><span class="w"> </span><span class="p">(</span><span class="nb">lazy-cat</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">+</span><span class="w"> </span><span class="p">(</span><span class="nb">rest</span><span class="w"> </span><span class="n">fibs</span><span class="p">)</span><span class="w"> </span><span class="n">fibs</span><span class="p">)))</span><span class="w">
+</span></code></pre>
+
+<p>短いですね。順を追って説明しましょう。</p>
+
+<p>まず<code>lazy-cat</code>ですが、これはシーケンスの連結(concat)です。ただし遅延評価のシーケンスを返します。</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="nb">lazy-cat</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="mi">6</span><span class="p">])</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nf">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="mi">6</span><span class="p">)</span><span class="w">
+</span></code></pre>
+
+<p>つまり<code>fibs</code>は、<code>[0 1]</code>と<code>(map + (rest fibs) fibs)</code>の結果が連結されたものということです。
+mapに第3引数以降を与えると次のような動作をします。</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">+</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">4</span><span class="p">])</span><span class="w">
+</span><span class="n">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nf">3</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="mi">7</span><span class="p">)</span><span class="w">
+</span></code></pre>
+
+<p>さて、<code>fibs</code>の0番目の要素が欲しいとき、その値はもちろん<code>0</code>です。同様に1番目の値は1です。問題は2番目以降の値を取得する時ですね。</p>
+
+<p>1番目までしか値が分かっていないとき、fibsは</p>
+<pre class="highlight plaintext"><code>fibs = [0 1 ...]
+(rest fibs) = [1 ...]
+</code></pre>
+
+<p>&hellip;の部分が未確定部分です。</p>
+
+<p><code>(map + (rest fibs) fibs)</code>の最初の計算では<code>(rest fibs)</code>と<code>fibs</code>の0番目の要素同士を足し算するので<code>1+0=1</code>となり、<code>fibs</code>の2番目の値が確定します。</p>
+<pre class="highlight plaintext"><code>fibs = [0 1 1 ...]
+(rest fibs) = [1 1 ...]
+</code></pre>
+
+<p><code>(map + (rest fibs) fibs)</code>の2回目の計算では<code>(rest fibs)</code>と<code>fibs</code>の1番目の要素同士を足し算するので<code>1+1=2</code>となり、<code>fibs</code>の3番目の値が確定します。</p>
+<pre class="highlight plaintext"><code>fibs = [0 1 1 2...]
+(rest fibs) = [1 1 2...]
+</code></pre>
+
+<p>以降同じことの繰り返しです。<code>fibs</code>の要素はその値が必要になるまで計算されない(遅延評価なので当然)ので、先のワンライナーの<code>fibs</code>の定義だけで無限に続くフィボナッチ数列を全て表現できています。</p>
+
+<p>この定義の仕方をはじめて見たときは感動で涙腺が緩んだのを今でも覚えてます。</p>
+
+<p>遅延評価って便利ですね。</p>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

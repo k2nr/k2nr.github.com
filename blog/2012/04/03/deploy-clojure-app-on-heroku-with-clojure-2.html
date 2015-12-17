@@ -1,0 +1,281 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>HerokuでClojureアプリをCompojureを使ってデプロイしてみよう その2</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2012 blog_2012_04 blog_2012_04_03 blog_2012_04_03_deploy-clojure-app-on-heroku-with-clojure-2">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>HerokuでClojureアプリをCompojureを使ってデプロイしてみよう その2</h1>
+      <time datetime="2012-04-03" pubdate>Apr  3, 2012</time>
+    </header>
+    <p>ずいぶんと遅くなりましたけど、完結させます。</p>
+
+<ul>
+<li><a href="/blog/2012/03/22/deploy-clojure-app-on-heroku-with-clojure-1.html">前回のエントリ</a></li>
+<li><a href="https://github.com/k2nr/guchitter">ソースコード</a></li>
+<li><a href="http://guchitter.herokuapp.com/">実際に動いてるサンプル</a></li>
+</ul>
+
+<p>今日のアジェンダです。</p>
+
+<ul>
+<li>Hiccupのキホン</li>
+<li>DB操作を学ぶ</li>
+<li>Herokuにデプロイしてみよう</li>
+</ul>
+
+<p>とはいえ、ソースコードを読めば大体分かる話なのでサクっと流してHerokuにデプロイする説明して終わりにします。</p>
+
+<h2 id="hiccup">Hiccup</h2>
+
+<p>[Hiccup]はHTMLテンプレートエンジンです。めんどくさいのでさっそくコードを眺めてみましょう。</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="nf">ns</span><span class="w"> </span><span class="n">guchitter.views.layout</span><span class="w">
+  </span><span class="p">(</span><span class="no">:use</span><span class="w"> </span><span class="p">[</span><span class="n">hiccup.core</span><span class="w"> </span><span class="no">:only</span><span class="w"> </span><span class="p">[</span><span class="n">html</span><span class="p">]]</span><span class="w">
+        </span><span class="p">[</span><span class="n">hiccup.page-helpers</span><span class="w"> </span><span class="no">:only</span><span class="w"> </span><span class="p">[</span><span class="n">doctype</span><span class="w"> </span><span class="n">include-css</span><span class="p">]]))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">common-content</span><span class="w"> </span><span class="p">[</span><span class="n">title</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">body</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">html</span><span class="w">
+    </span><span class="p">(</span><span class="nf">doctype</span><span class="w"> </span><span class="no">:html5</span><span class="p">)</span><span class="w">
+    </span><span class="p">[</span><span class="no">:head</span><span class="w">
+     </span><span class="p">[</span><span class="no">:meta</span><span class="w"> </span><span class="p">{</span><span class="no">:charset</span><span class="w"> </span><span class="s">"utf-8"</span><span class="p">}]</span><span class="w">
+     </span><span class="p">[</span><span class="no">:title</span><span class="w"> </span><span class="n">title</span><span class="p">]</span><span class="w">
+     </span><span class="p">(</span><span class="nf">include-css</span><span class="w"> </span><span class="s">"/css/bootstrap.css"</span><span class="p">)</span><span class="w">
+     </span><span class="p">(</span><span class="nf">include-css</span><span class="w"> </span><span class="s">"/css/guchi.css"</span><span class="p">)]</span><span class="w">
+    </span><span class="p">[</span><span class="no">:body</span><span class="w">
+     </span><span class="p">[</span><span class="no">:div</span><span class="w"> </span><span class="p">{</span><span class="no">:class</span><span class="w"> </span><span class="s">"container"</span><span class="p">}</span><span class="w">
+      </span><span class="p">[</span><span class="no">:div</span><span class="w"> </span><span class="p">{</span><span class="no">:id</span><span class="w"> </span><span class="s">"header"</span><span class="w"> </span><span class="no">:class</span><span class="w"> </span><span class="s">"page-header"</span><span class="p">}</span><span class="w">
+       </span><span class="p">[</span><span class="no">:h1</span><span class="w"> </span><span class="n">title</span><span class="p">]]</span><span class="w">
+      </span><span class="p">[</span><span class="no">:div</span><span class="w"> </span><span class="p">{</span><span class="no">:id</span><span class="w"> </span><span class="s">"content"</span><span class="p">}</span><span class="w"> </span><span class="n">body</span><span class="p">]]]))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">not-found</span><span class="w"> </span><span class="p">[]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">common-content</span><span class="w"> </span><span class="s">"404"</span><span class="w">
+                  </span><span class="p">[</span><span class="no">:div</span><span class="w"> </span><span class="p">{</span><span class="no">:id</span><span class="w"> </span><span class="s">"not-found"</span><span class="p">}</span><span class="w">
+                   </span><span class="s">"404 Page Not Found"</span><span class="p">]))</span><span class="w">
+</span></code></pre>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="nf">ns</span><span class="w"> </span><span class="n">guchitter.views.guchi</span><span class="w">
+  </span><span class="p">(</span><span class="no">:use</span><span class="w"> </span><span class="p">[</span><span class="n">hiccup.core</span><span class="w"> </span><span class="no">:only</span><span class="w"> </span><span class="p">[</span><span class="n">html</span><span class="w"> </span><span class="n">h</span><span class="p">]]</span><span class="w">
+        </span><span class="p">[</span><span class="n">hiccup.page-helpers</span><span class="w"> </span><span class="no">:only</span><span class="w"> </span><span class="p">[</span><span class="n">doctype</span><span class="p">]]</span><span class="w">
+        </span><span class="p">[</span><span class="n">hiccup.form-helpers</span><span class="w"> </span><span class="no">:only</span><span class="w"> </span><span class="p">[</span><span class="n">form-to</span><span class="w"> </span><span class="n">label</span><span class="w"> </span><span class="n">text-area</span><span class="w"> </span><span class="n">submit-button</span><span class="p">]])</span><span class="w">
+  </span><span class="p">(</span><span class="no">:require</span><span class="w"> </span><span class="p">[</span><span class="n">guchitter.views.layout</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">layout</span><span class="p">]))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">guchi-form</span><span class="w"> </span><span class="p">[]</span><span class="w">
+  </span><span class="p">[</span><span class="no">:div</span><span class="w"> </span><span class="p">{</span><span class="no">:id</span><span class="w"> </span><span class="s">"guchi-form"</span><span class="w"> </span><span class="no">:class</span><span class="w"> </span><span class="s">"hero-unit"</span><span class="p">}</span><span class="w">
+   </span><span class="p">[</span><span class="no">:form</span><span class="w"> </span><span class="p">{</span><span class="no">:method</span><span class="w"> </span><span class="s">"POST"</span><span class="w"> </span><span class="no">:action</span><span class="w"> </span><span class="s">"/"</span><span class="p">}</span><span class="w">
+    </span><span class="p">(</span><span class="nf">label</span><span class="w"> </span><span class="s">"guchi"</span><span class="w"> </span><span class="s">"愚痴ってもいいんだよ？"</span><span class="p">)</span><span class="w">
+    </span><span class="p">[</span><span class="no">:textarea</span><span class="w"> </span><span class="p">{</span><span class="no">:name</span><span class="w"> </span><span class="s">"guchi"</span><span class="w"> </span><span class="no">:id</span><span class="w"> </span><span class="s">"guchi"</span><span class="w"> </span><span class="no">:class</span><span class="w"> </span><span class="s">"span8"</span><span class="w"> </span><span class="no">:rows</span><span class="w"> </span><span class="s">"4"</span><span class="p">}]</span><span class="w">
+    </span><span class="p">[</span><span class="no">:input</span><span class="w"> </span><span class="p">{</span><span class="no">:class</span><span class="w"> </span><span class="s">"btn btn-primary btn-large btn-guchiru"</span><span class="w"> </span><span class="no">:type</span><span class="w"> </span><span class="s">"submit"</span><span class="w"> </span><span class="no">:value</span><span class="w"> </span><span class="s">"ぐちる"</span><span class="p">}]]])</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">display-guchi</span><span class="w"> </span><span class="p">[</span><span class="n">guchis</span><span class="p">]</span><span class="w">
+  </span><span class="p">[</span><span class="no">:div</span><span class="w"> </span><span class="p">{</span><span class="no">:id</span><span class="w"> </span><span class="s">"guchi"</span><span class="p">}</span><span class="w">
+   </span><span class="p">(</span><span class="nb">map</span><span class="w">
+     </span><span class="p">(</span><span class="k">fn</span><span class="w"> </span><span class="p">[</span><span class="n">guchi</span><span class="p">]</span><span class="w"> </span><span class="p">[</span><span class="no">:h2</span><span class="w"> </span><span class="p">{</span><span class="no">:class</span><span class="w"> </span><span class="s">"guchi-unit"</span><span class="p">}</span><span class="w"> </span><span class="p">(</span><span class="nf">h</span><span class="w"> </span><span class="p">(</span><span class="no">:body</span><span class="w"> </span><span class="n">guchi</span><span class="p">))])</span><span class="w">
+     </span><span class="n">guchis</span><span class="p">)])</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="nb">index</span><span class="w"> </span><span class="p">[</span><span class="n">guchi</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">layout/common-content</span><span class="w"> </span><span class="s">"ぐちってー"</span><span class="w">
+                         </span><span class="p">(</span><span class="nf">guchi-form</span><span class="p">)</span><span class="w">
+                         </span><span class="p">(</span><span class="nf">display-guchi</span><span class="w"> </span><span class="n">guchi</span><span class="p">)))</span><span class="w">
+</span></code></pre>
+
+<p>Hiccupでは一つのHTMLエレメントを配列で表現します。配列の最初の要素がHTMLエレメントの名前、第2要素にHTMLエレメントの属性をマップで、第3要素以降に中身を記述します。当然、中身は配列の入れ子構造になることもあります。
+試しにREPLで次のコードを実行してみましょう。</p>
+<pre class="highlight plaintext"><code>guchitter.core&gt; (hiccup.core/html [:div {:id "guchi-form" :class "hero-unit"} [:h2 "text"]]&gt;)
+</code></pre>
+
+<p>こんな結果が返ってくるはずです。</p>
+<pre class="highlight plaintext"><code>"&lt;div class=\"hero-unit\" id=\"guchi-form\"&gt;&lt;h2&gt;text&lt;/h2&gt;&lt;/div&gt;"
+</code></pre>
+
+<p>非常にシンプルで使いやすいですね。むしろ本物のHTMLより書きやすいくらいです。逆に、HTMLを直接書くわけではないので、デザイナとプログラマが完全に分離しているようなプロジェクトではHiccupを使用するのは難しいかもしれません。</p>
+
+<h2 id="db操作してみよう">DB操作してみよう</h2>
+
+<p>postgresqlの操作にはclojureのjdbcインタフェースを使用します。</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="nf">ns</span><span class="w"> </span><span class="n">guchitter.models.db</span><span class="p">)</span><span class="w">
+
+</span><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">my-db</span><span class="w"> </span><span class="p">(</span><span class="nf">System/getenv</span><span class="w"> </span><span class="s">"DATABASE_URL"</span><span class="p">))</span><span class="w">
+</span></code></pre>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="nf">ns</span><span class="w"> </span><span class="n">guchitter.models.guchi</span><span class="w">
+  </span><span class="p">(</span><span class="no">:use</span><span class="w"> </span><span class="p">[</span><span class="n">guchitter.models.db</span><span class="w"> </span><span class="no">:only</span><span class="w"> </span><span class="p">[</span><span class="n">my-db</span><span class="p">]])</span><span class="w">
+  </span><span class="p">(</span><span class="no">:require</span><span class="w"> </span><span class="p">[</span><span class="n">clojure.java.jdbc</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">sql</span><span class="p">]))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">get-all</span><span class="w"> </span><span class="p">[]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">sql/with-connection</span><span class="w"> </span><span class="n">my-db</span><span class="w">
+    </span><span class="p">(</span><span class="nf">sql/with-query-results</span><span class="w"> </span><span class="n">results</span><span class="w">
+      </span><span class="p">[</span><span class="s">"select * from guchi order by id desc"</span><span class="p">]</span><span class="w">
+      </span><span class="p">(</span><span class="nf">vec</span><span class="w"> </span><span class="n">results</span><span class="p">))))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">create</span><span class="w"> </span><span class="p">[</span><span class="n">guchi</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">sql/with-connection</span><span class="w"> </span><span class="n">my-db</span><span class="w">
+    </span><span class="p">(</span><span class="nf">sql/insert-values</span><span class="w"> </span><span class="no">:guchi</span><span class="w"> </span><span class="p">[</span><span class="no">:body</span><span class="p">]</span><span class="w"> </span><span class="p">[</span><span class="n">guchi</span><span class="p">])))</span><span class="w">
+</span></code></pre>
+
+<p><code>clojure.java.jdbc/with-connection</code>マクロは第1引数で指定されたDBに対して以降の引数を実行します。この例では<code>clojure.java.jdbc/with-query-results</code>と<code>clojure.java.jdbc/insert-values</code>を使用しています。本題とは逸れますが、ここではこれらのマクロの使用方法をClojureのREPLを使って確認しましょう。決して説明がめんどくさくなったわけではありません。REPLで以下のように実行して下さい。</p>
+<pre class="highlight plaintext"><code>&gt; (doc clojure.java.jdbc/with-query-results)
+</code></pre>
+
+<p>すると<code>with-query-results</code>の説明が颯爽と姿を表します。</p>
+<pre class="highlight plaintext"><code>-------------------------
+clojure.java.jdbc/with-query-results
+([results sql-params &amp; body])
+Macro
+  Executes a query, then evaluates body with results bound to a seq of the
+  results. sql-params is a vector containing either:
+    [sql &amp; params] - a SQL query, followed by any parameters it needs
+    [stmt &amp; params] - a PreparedStatement, followed by any parameters it needs
+                      (the PreparedStatement already contains the SQL query)
+    [options sql &amp; params] - options and a SQL query for creating a
+                      PreparedStatement, follwed by any parameters it needs
+  See prepare-statement for supported options.
+</code></pre>
+
+<p>この<code>doc</code>は非常によく使います。不明な関数やマクロに出会ったときは仕様を確認する癖をつけておくといいかもしれません。</p>
+
+<h2 id="herokuへのデプロイ">Herokuへのデプロイ</h2>
+
+<p>さて、非常に雑な説明でしたがここまででアプリの全体を通して見てきました。最後にこれをHerokuにデプロイしましょう。</p>
+
+<p>はじめにherokuが利用可能な状態にならないといけません。</p>
+
+<h3 id="herokuコマンドのインストール">herokuコマンドのインストール</h3>
+
+<p>多分次の1行を実行するだけでインストールできるはずです。</p>
+<pre class="highlight plaintext"><code>sudo gem install heroku
+</code></pre>
+
+<h3 id="herokuでアカウント作成">herokuでアカウント作成</h3>
+
+<p><a href="http://heroku.com">heroku</a>でアカウントを作成しましょう。</p>
+
+<h3 id="sshキーの登録">SSHキーの登録</h3>
+
+<p>gitでpushする際に必要になるSSHキーをherokuに登録します。</p>
+<pre class="highlight plaintext"><code>&gt; heroku keys:add
+</code></pre>
+
+<p>Eメールとパスワードを聞かれるのでherokuアカウントのものを入力します。</p>
+
+<h3 id="herokuアプリケーションの作成">herokuアプリケーションの作成</h3>
+
+<p>heroku上にアプリケーションを作成します。</p>
+<pre class="highlight plaintext"><code>&gt; heroku create --stack cedar
+</code></pre>
+
+<h3 id="gitレポジトリの作成">gitレポジトリの作成</h3>
+
+<p>次にguchitterプロジェクトをgitで管理します。herokuはgit pushすることでデプロイしますからね。</p>
+<pre class="highlight plaintext"><code>(guchitterプロジェクトのルートディレクトリで)
+&gt; git init
+&gt; git add .
+&gt; git commit -m "initial commit"
+</code></pre>
+
+<h3 id="herokuでdbを使う">herokuでDBを使う</h3>
+
+<p>herokuの共有DBを使用する設定です。</p>
+<pre class="highlight plaintext"><code>&gt; heroku addons:add shared-database
+</code></pre>
+
+<p>共有DBのURLは前回説明したとおり、heroku上では環境変数<code>DATABASE_URL</code>です。</p>
+
+<p>ちなみに共有DBのアドレスなどは<code>heroku config</code>で確認できます。</p>
+
+<h3 id="herokuにpush">herokuにpush</h3>
+
+<p>herokuにソースをpushしましょう。</p>
+<pre class="highlight plaintext"><code>&gt; git push heroku master
+</code></pre>
+
+<p>リモートの<code>heroku</code>は<code>heroku create</code>実行時に勝手に作成されたものです。</p>
+
+<h3 id="共有dbにテーブルを作成">共有DBにテーブルを作成</h3>
+
+<p>guchitter用のテーブルを作成します。</p>
+<pre class="highlight plaintext"><code>&gt; heroku run lein run -m guchitter.models.migration
+</code></pre>
+
+<p>これでmigrationが実行されました。</p>
+
+<h3 id="プロセスの起動">プロセスの起動</h3>
+
+<p>ついに最後。herokuアプリのプロセスを起動しましょう。</p>
+<pre class="highlight plaintext"><code>heroku ps:scale web=1
+</code></pre>
+
+<h3 id="アプリを見てみる">アプリを見てみる</h3>
+
+<p>実際に動いてるか確認してみましょう。</p>
+<pre class="highlight plaintext"><code>heroku open
+</code></pre>
+
+<h2 id="まとめ">まとめ</h2>
+
+<p>長くなった上にあまり中身のない記事になってしまいました。解説の量が多くなってしまったので、多々間違いがあるかと思います。お気づきの点は是非コメントでお知らせ下さい。</p>
+
+<p>でわ。</p>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

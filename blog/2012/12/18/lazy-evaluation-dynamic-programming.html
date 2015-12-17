@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>遅延評価を使って動的計画法を使ってみよう</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2012 blog_2012_12 blog_2012_12_18 blog_2012_12_18_lazy-evaluation-dynamic-programming">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>遅延評価を使って動的計画法を使ってみよう</h1>
+      <time datetime="2012-12-18" pubdate>Dec 18, 2012</time>
+    </header>
+    <p>前回の<a href="http://k2nr.me/blog/2012/12/18/useful-lazy-evaluation-example.html">ポスト</a>を書いてて、これはDP(<a href="http://ja.wikipedia.org/wiki/%E5%8B%95%E7%9A%84%E8%A8%88%E7%94%BB%E6%B3%95">Dynamic Programming、動的計画法</a>)を遅延評価で実現しているんじゃないか、ということをふと思いました。</p>
+
+<p>それならばもっと難しいDPの問題も遅延評価を使って解いてみたら面白いんじゃないか、とふと思いました。</p>
+
+<p>やってみました。</p>
+
+<p>問題に選んだのはかの有名な<a href="http://ja.wikipedia.org/wiki/%E3%83%8A%E3%83%83%E3%83%97%E3%82%B5%E3%83%83%E3%82%AF%E5%95%8F%E9%A1%8C">ナップザック問題</a>です。</p>
+
+<blockquote>
+<p>問題:
+重さと価値をもったn個の荷物がある。合計Wの重さまで入るナップザックに荷物をいれるとき、ナップザックに入れる荷物の価値の合計が最大となる組み合わせをみつけよ。ただし、同一の荷物はいくつでも入れることができるとする。</p>
+</blockquote>
+
+<p>個数制限なしのパターンのナップザック問題です。</p>
+
+<p>漸化式DP(i, j)をi番目までの荷物を使って重量jまでナップザックに入れた時の価値の最大値、i番目の荷物の重量、価値をそれぞれw[i],v[i]とすると</p>
+<pre class="highlight plaintext"><code>DP(i, j) =
+    DP(i-1, j) : (j &gt; w[i] の場合)
+    max( DP(i-1, j), DP(i, j-w[i]) + v[i] ) : (それ以外の場合)
+</code></pre>
+
+<p>このような漸化式をプログラムに反映します。</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">dp-table</span><span class="w"> </span><span class="p">[</span><span class="n">items</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">letrec</span><span class="w"> </span><span class="p">[</span><span class="n">tbl</span><span class="w"> </span><span class="p">(</span><span class="nb">lazy-cat</span><span class="w"> </span><span class="p">[(</span><span class="nb">repeat</span><span class="w"> </span><span class="mi">0</span><span class="p">)]</span><span class="w">
+                         </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="p">(</span><span class="k">fn</span><span class="w"> </span><span class="p">[</span><span class="n">t</span><span class="w"> </span><span class="p">[</span><span class="n">w</span><span class="w"> </span><span class="n">v</span><span class="p">]]</span><span class="w">
+                                </span><span class="p">(</span><span class="nf">letrec</span><span class="w"> </span><span class="p">[</span><span class="n">js</span><span class="w"> </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">max</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="p">(</span><span class="nb">lazy-cat</span><span class="w"> </span><span class="p">(</span><span class="nb">repeat</span><span class="w"> </span><span class="n">w</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w">
+                                                                 </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">+</span><span class="w"> </span><span class="n">js</span><span class="w"> </span><span class="p">(</span><span class="nb">repeat</span><span class="w"> </span><span class="n">v</span><span class="p">))))]</span><span class="w">
+                                  </span><span class="n">js</span><span class="p">))</span><span class="w">
+                              </span><span class="n">tbl</span><span class="w"> </span><span class="n">items</span><span class="p">))]</span><span class="w">
+    </span><span class="n">tbl</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">solve</span><span class="w"> </span><span class="p">[</span><span class="n">items</span><span class="w"> </span><span class="n">W</span><span class="p">]</span><span class="w">
+    </span><span class="p">(</span><span class="nb">nth</span><span class="w"> </span><span class="p">(</span><span class="nb">last</span><span class="w"> </span><span class="p">(</span><span class="nf">dp-table</span><span class="w"> </span><span class="n">items</span><span class="p">))</span><span class="w"> </span><span class="n">W</span><span class="p">))</span><span class="w">
+
+</span></code></pre>
+
+<p>比較的シンプルなコードに収まりましたが正直分かりづらいですね。まあ素直に<code>memoize</code>使って解けということでしょうか。</p>
+
+<p>この問題を解くには2次元のテーブルが必要なので遅延シーケンスを2次元で作っています。</p>
+
+<p>2行目の<code>lazy-cat</code>で作っているのシーケンスがi番目までの荷物を使った場合の価値のリストです。
+最初に<code>[(repeat 0)]</code>としているのは、0番目までの荷物を使った場合、つまり荷物をひとつも選べない場合はナップザックにどれだけの重量を入れられるとしても価値の最大値は0だからです。(このコードでは荷物は1番目から始まることにしているので0は何も選べない)</p>
+
+<p>続く3行目の<code>map</code>がこのコードのキモです。i方向のシーケンスのうち、今<code>map</code>で処理しようとしているシーケンス(i番目)の一つ前のシーケンス(i-1番目)を変数tとして受け取り、i番目の荷物の重量、価値を変数w,vで受け取っています。そして、4行目のjsがi番目の(遅延)シーケンスとなります。</p>
+
+<p>このjsですが、次のような考え方をします。上の漸化式を眺めてみてください。</p>
+
+<p>i番目の価値シーケンスにおいて、0 &lt;= j &lt;= w[i]までの間のDP(i, j)は必ずDP(i-1, j)になります。この区間において(j &gt; w[i])となることはありえないからです。(ちなみに、負の重量を考えると当然こうはなりませんが、今回は重量は正の整数ということにします)</p>
+
+<p>つまり先の漸化式は次のように表せます。</p>
+<pre class="highlight plaintext"><code>DP(i, j) = DP(i-1, j) (0 &lt;= j &lt;= w[i]の場合)
+DP(i, j) = max(DP(i-1, j), DP(i, j-w[i])) (j &gt; w[i]の場合)
+</code></pre>
+
+<p>これをリストの形式に変換するため、次のシーケンスを考えましょう。</p>
+<pre class="highlight plaintext"><code>DP(i) : DP(i, 0)からDP(i, W)までの価値シーケンス
+(0をw[i]回繰り返し) | (DP(i, 0)+v[i], DP(i, 1)+v[i], ..., DP(i, W)+v[i])
+</code></pre>
+
+<p><code>|</code>はシーケンスの連結を表します。
+この2つのシーケンスのそれぞれ対応する要素のmaxをとったものが、i番目のシーケンスということになります。プログラムと照らしあわせてみてください。</p>
+
+<p>この解法の特徴は遅延シーケンスの特徴を活かして、Wの方向(jの方向)は無限に続くことが表現できていることでしょうか。</p>
+
+<p>ということで晴れてDPテーブルが完成しました。あとはテーブルからデータを取り出すだけなので省略します。</p>
+
+<p>拙い説明で伝わりづらかったとは思いますが、あくまで僕の作業メモということで。</p>
+
+<p>おやすみなさい。</p>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

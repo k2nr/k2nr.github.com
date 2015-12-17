@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>slimv.vimを使ってvimでサクサクClojure開発</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2012 blog_2012_04 blog_2012_04_04 blog_2012_04_04_slimv-vim-and-clojure">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>slimv.vimを使ってvimでサクサクClojure開発</h1>
+      <time datetime="2012-04-04" pubdate>Apr  4, 2012</time>
+    </header>
+    <p>最近Clojureネタだらけですけどご勘弁を。</p>
+
+<p>以前、<a href="/blog/2012/03/17/clojure-leiningen-vimclojure.html">VimClojureを紹介しました</a>が今回さらに便利なvimのプラグインを見つけたので紹介します。
+驚くほど日本語の情報が少ないので知らない人が多いのかもしれません。</p>
+
+<p><a href="http://www.vim.org/scripts/script.php?script_id=2531">slimv.vim</a>というプラグインです。clojureで使用するためにはいくつか設定が必要なので今回はとりあえず使用可能になるところまで説明します。</p>
+
+<p>ところでこのプラグイン、名前のとおりSLIMEをvimから使用可能にするプラグインなので、当然Clojure以外のlisp(CL,Scheme)でも使うことができます。が、僕がclojure以外で使ったことがないのでそれらの説明は省きます。</p>
+
+<h2 id="slimv-vimのインストール">slimv.vimのインストール</h2>
+
+<p>NeoBundleやVundleを導入しているなら何も考えずに次の設定を<code>.vimrc</code>に追加して下さい。</p>
+<pre class="highlight plaintext"><code>NeoBundle 'slimv.vim'
+</code></pre>
+
+<p>導入してない人はさっさと導入するのが吉です。
+あ、VimClojureが有効になってるひとOFFっといてください。機能が競合してまともに動かなくなってしまいます。</p>
+
+<h2 id="slimv-vimの設定">slimv.vimの設定</h2>
+
+<p>slimv.vimがSWANKサーバと通信する際にSWANKサーバが起動していない場合の起動方法の指定です。
+ちなみにmac限定かつiTerm使用者限定です。それ以外の環境についてはよくわかりません。当然ここから先の説明も上記の環境を前提で進めます。<code>.vimrc</code>に次の1行を追加して下さい。</p>
+<pre class="highlight plaintext"><code>let g:slimv_swank_clojure = '!osascript -e "tell app \"iTerm\"" -e "tell the first terminal" -e "set mysession to current session" -e "launch session \"Default Session\"" -e "tell the last session" -e "exec command \"/bin/bash\"" -e "write text \"cd $(pwd)\"" -e "write text \"lein swank\"" -e "end tell" -e "select mysession" -e "end tell" -e "end tell"'
+</code></pre>
+
+<p>公式で解説されているのはTerminalを用いたSWANKサーバの起動方法でしたが、上記はiTermを用いた方法になります。
+簡単に説明すると</p>
+
+<ol>
+<li>iTermの新規セッション(新規タブ)を生成する</li>
+<li>生成したセッションでbashを起動する</li>
+<li>生成したセッションをもとのセッションのカレントディレクトリに移動させる</li>
+<li><code>lein swank</code>(後述)を実行する</li>
+<li>アクティブなセッションをもとのセッション(vimの起動しているセッション)に戻す</li>
+</ol>
+
+<p>こんな感じです。ここで一応設定はしていますが、実際に使用する際は直接<code>lein swank</code>を実行しておいてその後vimを起動するほうが良い気がします。SWANKサーバの起動が遅いのでタイムアウトすることがよくあります。</p>
+
+<h2 id="swank-clojureのインストール">swank-clojureのインストール</h2>
+
+<p><a href="/blog/2012/03/17/clojure-leiningen-vimclojure.html">以前の記事</a>でleiningenのインストールについては説明しました。そのleiningenを使用してSWANKサーバを起動しますので、それ用のプラグインを導入します。</p>
+
+<p>コンソールから以下を実行して下さい。</p>
+<pre class="highlight plaintext"><code>$ lein plugin install swank-clojure 1.4.2
+</code></pre>
+
+<h2 id="日本語を使う">日本語を使う</h2>
+
+<p>Macだと日本語がそのままじゃ使えませんでした。以下の設定をシェルの設定ファイルに追記しておくと幸せになれます。</p>
+<pre class="highlight plaintext"><code>export JAVA_OPTS="-Dswank.encoding=utf-8-unix"
+</code></pre>
+
+<h2 id="使ってみる">使ってみる</h2>
+
+<p>ここまでで準備は完了です。動かしてみましょう。</p>
+
+<p>まず、適当なディレクトリで新規にleiningenのプロジェクトを作成します。</p>
+<pre class="highlight plaintext"><code>$ lein new helloworld
+</code></pre>
+
+<p>vimでソースを開きます。</p>
+<pre class="highlight plaintext"><code>$ cd helloworld
+$ vim src/helloworld/core.clj
+</code></pre>
+
+<p>何か書いてみましょう。僕がいつも使う例で末尾要素を求める<code>tail</code>関数でも実装してみましょうか。
+コピペしないでちゃんと書いて下さいね。</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="nf">ns</span><span class="w"> </span><span class="n">helloworld.core</span><span class="p">)</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">tail</span><span class="w"> </span><span class="p">[</span><span class="n">lst</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nf">empty?</span><span class="w"> </span><span class="p">(</span><span class="nb">rest</span><span class="w"> </span><span class="n">lst</span><span class="p">))</span><span class="w">
+    </span><span class="p">(</span><span class="nb">first</span><span class="w"> </span><span class="n">lst</span><span class="p">)</span><span class="w">
+    </span><span class="p">(</span><span class="nf">recur</span><span class="w"> </span><span class="p">(</span><span class="nb">rest</span><span class="w"> </span><span class="n">lst</span><span class="p">))))</span><span class="w">
+</span></code></pre>
+
+<p>さて、書いてる段階で既にslimv.vimのパワーを感じたんじゃないでしょうか。多分以下の機能が動いてたと思います。</p>
+
+<ul>
+<li>オートインデント</li>
+<li>シンタックスカラーリング</li>
+<li>対応する括弧の自動挿入</li>
+<li>関数の補完機能</li>
+</ul>
+
+<p>もちろんslimv.vimの底力はこんなものではないです。次に1行目にカーソルがある状態で<code>,e</code>とキーを押してみて下さい。</p>
+
+<p>気味の悪い待ち時間の後にREPLが開いて<code>ns</code>が評価されましたね。失敗した人はおそらくSWANKの起動が遅くてタイムアウトしたんだと思います。もう一回<code>,e</code>してみて下さい。
+(とまあ、こういうことが起こりうるので、予め別のタブで<code>lein swank</code>を直接実行してSWANKサーバを起動しておいたほうがいいです)</p>
+
+<p><code>,e</code>は「カーソル位置のS式を評価」します。その他のeval関連機能は<code>,d</code>でdefnを評価、<code>,b</code>でバッファ全体を評価、<code>,r</code>で選択領域を評価、<code>,v</code>でインタラクティブに評価、です。</p>
+
+<p><code>tail</code>関数に<code>&#39;()</code>が渡されたら<code>nil</code>ではなく<code>&#39;()</code>を返したくなってきました。if全体をさらにifで囲う必要がありますね。ifの左の括弧の上にカーソルを置いて<code>,W</code>と押してみましょう。開き括弧がもう一つと、正しい位置に閉じ括弧が挿入されました。これは捗りますね。</p>
+
+<p>修正後のソースです。</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="nf">ns</span><span class="w"> </span><span class="n">helloworld.core</span><span class="p">)</span><span class="w">
+
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">tail</span><span class="w"> </span><span class="p">[</span><span class="n">lst</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nf">empty?</span><span class="w"> </span><span class="n">lst</span><span class="p">)</span><span class="w">
+    </span><span class="o">'</span><span class="p">()</span><span class="w">
+    </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nf">empty?</span><span class="w"> </span><span class="p">(</span><span class="nb">rest</span><span class="w"> </span><span class="n">lst</span><span class="p">))</span><span class="w">
+      </span><span class="p">(</span><span class="nb">first</span><span class="w"> </span><span class="n">lst</span><span class="p">)</span><span class="w">
+      </span><span class="p">(</span><span class="nf">recur</span><span class="w"> </span><span class="p">(</span><span class="nb">rest</span><span class="w"> </span><span class="n">lst</span><span class="p">)))))</span><span class="w">
+</span></code></pre>
+
+<p>ちょっと待てよ。clojure組み込みの<code>last</code>関数は<code>&#39;()</code>が渡されたら<code>nil</code>を返しますね。やっぱり元の関数に戻しましょう。
+まず追加したifの行で<code>dd</code>しましょう。おや？括弧が一つ消えてないですね。これはslimv.vimが常に対応する括弧を必要とするため、閉じ括弧を残した状態で開き括弧だけ消すことができないからです。(Pareditモードといって、設定でOFFにすることもできます)</p>
+
+<p>残った開き括弧の上にカーソルを置いて<code>,S</code>と押してみましょう。おお、対応する括弧と一緒に開き括弧が消えましたね。これは捗りますね！</p>
+
+<p>おいそこのお前、アンドゥすればいいじゃんとか言うな。</p>
+
+<h2 id="他にもたくさんの機能が">他にもたくさんの機能が</h2>
+
+<p>slimv.vimはこの他にもデバッグやトレースなど非常に多機能なのでここで全ての機能を紹介することはできません。さらに学びたい方はvimのヘルプを読むか、非常によくまとまった<a href="http://kovisoft.bitbucket.org/tutorial.html">チュートリアル</a>もあります。</p>
+
+<p>ということで、Enjoy Hacking!</p>
+
+<p>でわ。</p>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

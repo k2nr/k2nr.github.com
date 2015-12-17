@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>Vichrome</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="products products_vichrome">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+  <h1 id="vichrome">Vichrome</h1>
+
+<h2 id="概要">概要</h2>
+
+<p>Google Chromeをvimライクに操作するためのエクステンションです。</p>
+
+<p>多くのユーザーと開発者に恵まれ、現在ではインストール数13,000以上、GitHubで197スターです。</p>
+
+<h2 id="インストール">インストール</h2>
+
+<p>Google Chromeで下記のエクステンションをインストールしてください。</p>
+
+<p><a href="https://chrome.google.com/webstore/detail/vichrome/gghkfhpblkcmlkmpcpgaajbbiikbhpdi">https://chrome.google.com/webstore/detail/vichrome/gghkfhpblkcmlkmpcpgaajbbiikbhpdi</a></p>
+
+<h2 id="ソースコード">ソースコード</h2>
+
+<p>GitHubで公開しています。</p>
+
+<p><a href="https://github.com/k2nr/ViChrome">https://github.com/k2nr/ViChrome</a></p>
+
+<h2 id="開発の動機">開発の動機</h2>
+
+<p>FireFoxには、Vichromeと同様の機能を実現する拡張機能としてVimperatorがありますが、Vichrome開発開始当時(2011/9月頃)、Chromeには機能面でVimperatorに近い拡張機能が存在していなかったため自作しました。</p>
+
+<h2 id="操作説明">操作説明</h2>
+
+<p>Vichromeは機能が非常に多いため、ごく一部の主要な機能を以下で説明します。</p>
+
+<p>なお、完全なユーザーマニュアルは以下を参照してください。</p>
+
+<p><a href="https://github.com/k2nr/ViChrome/wiki/Vichrome-User-Manual">https://github.com/k2nr/ViChrome/wiki/Vichrome-User-Manual</a></p>
+
+<h3 id="デフォルトキーバインド">デフォルトキーバインド</h3>
+
+<p>デフォルトで多数のキーバインドを設定しています。以下はその一部です。</p>
+
+<ul>
+<li><code>h</code>, <code>j</code>: 上下移動</li>
+<li><code>f</code>: f-modeと呼んでいる、キーボードだけでリンクの遷移や要素の選択を実現する機能です。一般的にはHit-A-Hintと呼ばれることが多いです。</li>
+<li><code>gg</code>: ページの先頭へ移動</li>
+<li><code>x</code>: タブを閉じる</li>
+<li><code>/</code>: 検索モード</li>
+<li><code>:</code>: コマンドモード
+
+<ul>
+<li>コマンドを直接実行できます。</li>
+</ul></li>
+</ul>
+
+<p>デフォルトのキーバインドの一覧は下記ページを参照してください。</p>
+
+<p><a href="https://github.com/k2nr/ViChrome/wiki/Vichrome-User-Manual#default-key-mappings--aliases">https://github.com/k2nr/ViChrome/wiki/Vichrome-User-Manual#default-key-mappings&ndash;aliases</a></p>
+
+<h2 id="カスタマイズ">カスタマイズ</h2>
+
+<p>chromeの新しいタブで<code>chrome://extensions</code>を開いて、VichromeのOptionsを開きます。
+多数のオプションがありますので、代表的なオプションの概要を説明します。</p>
+
+<h3 id="general-basics-scroll-step-size">General / Basics / Scroll Step Size</h3>
+
+<p><code>j</code>、<code>k</code>による移動の単位です</p>
+
+<h3 id="general-basics-disable-auto-focus-when-page-is-opened">General / Basics / Disable auto focus when page is opened</h3>
+
+<p>ウェブページによってはページを開いた際に特定のDOMエレメントにフォーカスする仕様のものがあります(例えばgoogleだと検索ボックスにフォーカスします)。
+Vichromeを使用する上では邪魔になるので、このような自動フォーカスを無効にするオプションです。</p>
+
+<h3 id="general-basics-smooth-scroll">General / Basics / Smooth Scroll</h3>
+
+<p>スムーススクロールです</p>
+
+<h3 id="general-search-f-mode-hit-hints">General / Search / f Mode(Hit Hints)</h3>
+
+<p>Vichromeの検索で最後の候補の後に先頭の候補にループするオプションです。</p>
+
+<h3 id="general-search-f-mode-keys">General / Search / f Mode Keys</h3>
+
+<p>f-modeで候補のキーに使用される文字一覧です。</p>
+
+<h3 id="general-ignored-urls">General / Ignored URLs</h3>
+
+<p>Vichrome自体を無効にするURLの一覧です。ワイルドカードを使うことができます。</p>
+
+<h3 id="key-mapping">Key Mapping</h3>
+
+<p>vimの<code>.vimrc</code>のように、キーバインドやエイリアスをカスタマイズすることができます。
+ごく簡単な設定例を以下に示します。</p>
+<pre class="highlight plaintext"><code># #から行末まではコメントです
+
+# .キーをtabsコマンドにマップします
+nmap . :tabs
+
+# スペースキーの後にmを押すとGMailを新しいタブで開く
+nmap &lt;Space&gt;m :TabOpenNew https://mail.google.com/mail/#inbox
+
+# コマンドモード(:)でdownloadsを実行するとchromeのダウンロード一覧ページを開く
+alias downloads TabOpenNew chrome://downloads
+
+# コマンドモードでctを実行するとクリップボードに「 / &lt;ページのタイトル&gt; &lt;ページのURL&gt;」という文字列をコピーする
+alias ct Copy ' / %title %url'
+</code></pre>
+
+<h2 id="技術的な説明">技術的な説明</h2>
+
+<p>Chromeエクステンションはjavascript/HTML/CSSで構成されます。Vichromeもこれらの技術要素を用いて実装していますが、javascriptの代わりにCoffeeScriptを使用しています。</p>
+
+<p>Chromeエクステンションは次の3つの要素で構成されます。</p>
+
+<h3 id="コンテントスクリプト">コンテントスクリプト</h3>
+
+<p>各タブで実行されるjavascriptのスクリプトです。コンテントスクリプトではDOMの操作を行えるため、VichromeではDOM操作が必要な処理はコンテントスクリプトとして実装しています。</p>
+
+<p>以下で指定しているファイルがコンテントスクリプトとして各ページに読み込まれます。</p>
+
+<p><a href="https://github.com/k2nr/ViChrome/blob/master/manifest.json#L33">https://github.com/k2nr/ViChrome/blob/master/manifest.json#L33</a></p>
+
+<h3 id="バックグラウンドページ">バックグラウンドページ</h3>
+
+<p>各エクステンション毎に生成されるエクステンション固有のページです。バックグラウンドページからはすべてのChrome Extension APIを呼ぶことができるので、各タブ固有ではないエクステンションとして共通の処理とChrome Extension APIのコールをバックグランドページから行っています。</p>
+
+<p>Vichromeのバックグラウンドページは以下のファイルです。</p>
+
+<p><a href="https://github.com/k2nr/ViChrome/blob/master/background.html">https://github.com/k2nr/ViChrome/blob/master/background.html</a></p>
+
+<h3 id="オプションページ">オプションページ</h3>
+
+<p>設定画面のページです。</p>
+
+<p><a href="https://github.com/k2nr/ViChrome/blob/master/options.html">https://github.com/k2nr/ViChrome/blob/master/options.html</a></p>
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

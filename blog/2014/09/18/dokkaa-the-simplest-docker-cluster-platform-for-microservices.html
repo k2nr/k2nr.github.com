@@ -1,0 +1,277 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>dockerによるmicro servicesのためのプラットフォームつくった</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2014 blog_2014_09 blog_2014_09_18 blog_2014_09_18_dokkaa-the-simplest-docker-cluster-platform-for-microservices">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>dockerによるmicro servicesのためのプラットフォームつくった</h1>
+      <time datetime="2014-09-18" pubdate>Sep 18, 2014</time>
+    </header>
+    <p>最近がんばって作ってたものがありまして、とりあえず最低限動くようになったので解説と紹介記事です。</p>
+
+<p>なんか流行ってるからタイトルになんとなくmicro servicesとか付けたけど別にmicro serviceを指向しているわけではありません。</p>
+
+<h2 id="dokkaa">Dokkaa</h2>
+
+<p><a href="https://github.com/k2nr/dokkaa">dokkaa</a>です。
+docker使ってるからdokkaaなんですが、呼ぶとき紛らわしいのでdokkaaの方はど→かー↑↑なアクセントです。dockerはど↑っかー→ですね。</p>
+
+<p>dokkaaは複数のレポジトリで開発しているのでまとめておきます。</p>
+
+<ul>
+<li><a href="https://github.com/k2nr/dokkaa">dokkaa</a></li>
+<li><a href="https://github.com/k2nr/dokkaa-conductor">dokkaa-conductor</a></li>
+<li><a href="https://github.com/k2nr/dokkaa-ambassador">dokkaa-ambassador</a></li>
+<li><a href="https://github.com/k2nr/dokkaa-builder">dokkaa-builder</a></li>
+<li><a href="https://github.com/k2nr/dokkaacfg">dokkaacfg</a></li>
+<li><a href="https://github.com/k2nr/skydns-docker">skydns-docker</a></li>
+</ul>
+
+<h2 id="これはなに">これはなに</h2>
+
+<p><a href="/blog/2014/08/21/docker-container-management.html">以前の記事</a>でも一部書きましたが、dockerをマルチホストで扱うためには(現状dockerだけでは解決できない)多くの課題があります。
+Dokkaaの目的はマルチホストでのコンテナクラスタを管理する際に発生するであろう問題を解決して、シンプルにクラスタを管理できるようにすることです。</p>
+
+<p>簡単にいえば<a href="https://github.com/GoogleCloudPlatform/kubernetes">kubernetes</a>の劣化版ともいえますが、色々とコンセプトレベルで実現したいことに違いがあったので自作しました。</p>
+
+<h2 id="つかいかた">つかいかた</h2>
+
+<p>dokkaaがどういうものなのか解説しようと思ったのですが、ちょっと分かりづらいプロダクトなのでチュートリアル形式がいいかな、ということで簡単に使い方を説明します。ちなみに以下の説明のコードはgithubに公開してます。</p>
+
+<p><a href="https://github.com/k2nr/dokkaa/tree/master/examples/nginx-and-crawler">https://github.com/k2nr/dokkaa/tree/master/examples/nginx-and-crawler</a></p>
+
+<h3 id="1-dokkaaクラスタを立ち上げる">1. Dokkaaクラスタを立ち上げる</h3>
+
+<p>まずDokkaaのホストを起動します。クラスタ管理用に<a href="https://github.com/k2nr/dokkaacfg">dokkaacfg</a>というツールを作ったのでこれを使ってDigitalOceanにインスタンスを2つ、以下のコマンドで起動します。</p>
+<pre class="highlight shell"><code><span class="gp">$ </span>gem install dokkaacfg
+<span class="gp">$ </span><span class="nb">export </span><span class="nv">DIGITALOCEAN_ACCESS_TOKEN</span><span class="o">=</span>&lt;your digitalocean access token&gt;
+<span class="gp">$ </span>dokkaacfg --provider<span class="o">=</span>digitalocean up --scale<span class="o">=</span>2 --ssh_key<span class="o">=</span>&lt;your ssh key name&gt;
+</code></pre>
+
+<p>アクセストークンとssh_keyは皆様のDigitalOceanアカウントのものを使ってください。</p>
+
+<p>DigitalOceanのアカウント持っていないって人は一応、vagrantでも使えます。</p>
+<pre class="highlight shell"><code><span class="gp">$ </span>git clone https://github.com/k2nr/dokkaacfg
+<span class="gp">$ </span><span class="nb">cd </span>dokkaacfg
+<span class="gp">$ </span>vagrant up
+</code></pre>
+
+<p>これでCore OSのインスタンスがデフォルトで3つ、<code>core-01</code>、<code>core-02</code>、<code>core-03</code>という名前で起動します。</p>
+
+<p>ちなみに現状ではDokkaaはCore OSしかサポートしていません。<a href="https://github.com/k2nr/dokkaacfg/blob/master/user-data">cloud-config</a>使ってるからなんですが、<a href="http://www.fig.sh/">fig</a>とか<a href="http://www.ansible.com/home">ansible</a>で他のディストリをサポートするのは難しくないのでそのうち対応します。</p>
+
+<p><img src="https://github.com/k2nr/dokkaacfg/raw/master/doc/images/screenshot_do.png" /></p>
+
+<p><code>dokkaacfg</code>でDigitalOceanにインスタンスを起動したらこんな感じで<code>dokkaaa-1</code>と<code>dokkaa-2</code>が起動してるはずです。</p>
+
+<h3 id="2-dokkaaコンテナの起動を待つ">2. Dokkaaコンテナの起動を待つ</h3>
+
+<p>各ホスト(<code>dokkaa-1</code>と<code>dokkaa-2</code>)ではdokkaaクラスタを構成するために必要なコンテナを起動します。これらのコンテナイメージの<code>docker pull</code>が結構時間かかるので起動するまで待ちます。</p>
+
+<p><img src="/images/2014091802.png" /></p>
+
+<p><img src="/images/2014091803.png" /></p>
+
+<p>数分待つと、こんな感じで<code>k2nr/dokkaa-conductor</code>、<code>k2nr/dokkaa-ambassador</code>、<code>k2nr/skydns-docker</code>のコンテナが起動します。</p>
+
+<p>こいつらが何をしてるのかは説明してると長くなるので次回に回します。レポジトリは次のとおりです。</p>
+
+<ul>
+<li><a href="https://github.com/k2nr/dokkaa-conductor">dokkaa-conductor</a></li>
+<li><a href="https://github.com/k2nr/dokkaa-ambassador">dokkaa-ambassador</a></li>
+<li><a href="https://github.com/k2nr/skydns-docker">skydns-docker</a></li>
+</ul>
+
+<h3 id="3-manifestをセットする">3. Manifestをセットする</h3>
+
+<p>さて、以上で準備は完了なので実際にdokkaaを使ってコンテナクラスタを構成してみましょう。
+dokkaaにおいて、各コンテナはmanifestというデータで<a href="https://github.com/coreos/etcd">etcd</a>上に管理されます。流れとしては</p>
+
+<ol>
+<li>etcdにmanifestを登録する</li>
+<li>dokkaaがetcdの変更を検知する</li>
+<li>manifestの中身を読んでdockerコンテナを起動する</li>
+<li>サービスディスカバリのためにskydnsにサービスのドメインを登録する</li>
+</ol>
+
+<p>manifestはJSON形式で表現されます。
+以下では例として、2つのmanifestを登録します。</p>
+
+<h4 id="3-1-nginx">3.1. nginx</h4>
+
+<p>1つ目は<code>nginx.json</code>です。</p>
+
+<ul>
+<li>nginx.json</li>
+</ul>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"image"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dockerfile/nginx"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"scale"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"services"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"nginx"</span><span class="p">:</span><span class="w"> </span><span class="mi">80</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>なんとなく分かると思いますが、このmanifestは次のことを示しています。</p>
+
+<ul>
+<li>このmanifestで表現されるコンテナは<code>dockerfile/nginx</code>イメージを使う</li>
+<li>コンテナの数はdokkaaクラスタ上で1つである</li>
+<li>このコンテナの80番ポートを<code>nginx</code>という名前でサービスとして登録する</li>
+</ul>
+
+<p>この<code>nginx.json</code>をetcdに登録します。本当ならこの辺を簡単に扱えるクライアント作りたいんですが、まあcurlするだけなので。</p>
+<pre class="highlight shell"><code><span class="gp">$ </span>curl -L -XPUT -d <span class="nv">value</span><span class="o">=</span><span class="s2">"</span><span class="sb">`</span>cat nginx.json<span class="sb">`</span><span class="s2">"</span> <span class="se">\</span>
+    http://&lt;dokkaa IP address&gt;:4001/v2/keys/apps/dummy/nginx/manifest
+</code></pre>
+
+<p>etcdのIPは起動したdokkaaのホストならどれでもいいです。
+etcdのパスに<code>dummy</code>と<code>nginx</code>ってのが登場しますが、これはApp名とコンテナ名です。
+Appというのはコンテナのグループを示す概念です。(このあたり、dokkaaは最終的にdockerによるマルチテナントなPaaS目指してるのが影響してます)</p>
+
+<p>これを実行してしばらく経つと(例によって<code>docker pull</code>が時間かかります)、dokkaaホストのうちのどれかにコンテナが起動します。</p>
+
+<p><img src="/images/2014091804.png" /></p>
+
+<p>コンテナ名が<code>dummy---nginx</code>で<code>dockerfile/nginx</code>のコンテナが起動してますね。これが上のmanifestに対応するコンテナです。</p>
+
+<h4 id="3-2-crawler">3.2. crawler</h4>
+
+<p>次に、crawlerと名付けたmanifestを登録します。このcrawlerの役割はシンプルで、上で登録したnginxサービスに対してひたすら<code>curl</code>し続けるだけです。</p>
+
+<ul>
+<li>crawler.json</li>
+</ul>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"image"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dockerfile/ubuntu"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"scale"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"command"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="s2">"/bin/bash"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"-c"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"while true; do curl http://$SERVICE_NGINX_ADDR:$SERVICE_NGINX_PORT; sleep 2; done"</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nt">"links"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="s2">"nginx"</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>このmanifestは次の情報を示します。</p>
+
+<ul>
+<li>コンテナのイメージは<code>dockerfile/ubuntu</code></li>
+<li>クラスタ内のcrawlerコンテナの数は1つだけ</li>
+<li>このコンテナは次のコマンドを実行する
+
+<ul>
+<li><code>/bin/bash -c &quot;while true; do curl http://$SERVICE_NGINX_ADDR:$SERVICE_NGINX_PORT; sleep 2; done&quot;</code></li>
+</ul></li>
+<li>上で登録した<code>nginx</code>サービスとリンクしている</li>
+</ul>
+
+<p>最後がわかりにくいですね。
+このcrawlerは先ほど起動したnginxコンテナのnginxサービスと通信したいわけですが、このnginxサービスがどのホストで(どのIPで)、どのポートでlistenしてるかcrawlerからは分からないわけです。なので、nginxサービスの場所についてはdokkaaが教えてくれるんですが、その方法がコンテナの環境変数です。つまり以下の2つ</p>
+
+<ul>
+<li><code>$SERVICE_NGINX_ADDR</code></li>
+<li><code>$SERVICE_NGINX_PORT</code></li>
+</ul>
+
+<p>crawlerはこの環境変数を通じてnginxサービスの居場所を知ることができます。<code>links</code>に<code>nginx</code>を指定しているのは、「このcrawlerはnginxサービスと通信するよ」ということをdokkaaに示すためのものです。</p>
+
+<p>さて、登録します。</p>
+<pre class="highlight shell"><code><span class="gp">$ </span>curl -L -XPUT --data-urlencode <span class="nv">value</span><span class="o">=</span><span class="s2">"</span><span class="sb">`</span>cat crawler.json<span class="sb">`</span><span class="s2">"</span> <span class="se">\</span>
+    http://&lt;dokkaa IP address&gt;:4001/v2/keys/apps/dummy/crawler/manifest
+</code></pre>
+
+<p>これまたしばらく経つと、<code>dummy---crawler</code>が起動します。</p>
+
+<p><img src="/images/2014091805.png" /></p>
+
+<p>さっきのnginxは<code>core-01</code>ホストで起動しましたが、今回は<code>core-02</code>ホストで起動しました。
+これは、dokkaaが各ホストで起動しているコンテナ数がバランス良くなるように制御しているためです。現在は単純に各ホストのコンテナ数しか見てないですが、将来的にはもっと賢い方法で負荷分散させたいですね。</p>
+
+<h3 id="crawlerの動きをみてみる">crawlerの動きをみてみる</h3>
+
+<p>これで<code>nginx</code>と<code>crawler</code>のクラスタは起動出来ました。
+crawlerのログを見てみましょう。</p>
+
+<p><img src="/images/2014091806.png" /></p>
+
+<p>ちゃんとnginxサービスと通信できてるのがわかるかと思います。</p>
+
+<h3 id="まとめ">まとめ</h3>
+
+<p>実際、上の手順を試してみると分かるかと思いますが最初のホストの起動を除けば、やってることはetcdに対して2つのmanifestを登録してるだけです。</p>
+
+<p>内部の仕組みを全然説明してないのでこれだけ見ると結構マジカルな感じがすると思いますが、複数ホストで複数dockerコンテナを管理する手間が大幅に解消されてるのを理解してもらえるかと思います。</p>
+
+<p>あと、どうでもいいけど今月一杯で仕事やめます。仕事の話があったらお願いします。</p>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

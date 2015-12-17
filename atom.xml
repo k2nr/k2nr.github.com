@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>k2nr.me</title>
+  <id>http://k2nr.me</id>
+  <link href="http://k2nr.me/blog"/>
+  <link href="http://k2nr.me/atom.xml" rel="self"/>
+  <updated>2014-12-22T13:18:45Z</updated>
+  <author>
+    <name>k2nr</name>
+  </author>
+  <entry>
+    <title>magitを使い始めて、evilといい感じに組み合わせた話</title>
+    <link rel="alternate" href="http://k2nr.me/blog/2014/12/22/emacs-magit.html"/>
+    <id>http://k2nr.me/blog/2014/12/22/emacs-magit.html</id>
+    <published>2014-12-22T13:18:45Z</published>
+    <updated>2015-12-17T01:28:10+00:00</updated>
+    <author>
+      <name>k2nr</name>
+    </author>
+    <content type="html">&lt;p&gt;この記事は&lt;a href="http://qiita.com/advent-calendar/2014/emacs"&gt;Emacs Advent Calendar&lt;/a&gt;の22日目です。&lt;/p&gt;
+
+&lt;p&gt;若干今更感のある話ですが、最近&lt;a href="http://magit.github.io"&gt;Magit&lt;/a&gt;を使い始めました。
+ところで僕はevilを使っていて、evilとmagitを同時に使うとデフォルトだとかなり微妙な感じになるのでevilとmagitを一緒に使ってもいい感じになるようにいい感じにカスタマイズしたので紹介します。&lt;/p&gt;
+
+&lt;h2 id="一応、magitとは"&gt;一応、Magitとは&lt;/h2&gt;
+
+&lt;p&gt;emacs上で動作するgitクライアントです。普段gitを使ってするような操作は多分大体magitで実現できます。&lt;/p&gt;
+
+&lt;h2 id="magitの設定"&gt;magit...&lt;/h2&gt;</content>
+  </entry>
+  <entry>
+    <title>transducersとcore.async</title>
+    <link rel="alternate" href="http://k2nr.me/blog/2014/12/14/transducers-and-async.html"/>
+    <id>http://k2nr.me/blog/2014/12/14/transducers-and-async.html</id>
+    <published>2014-12-14T13:22:47Z</published>
+    <updated>2015-12-17T01:28:10+00:00</updated>
+    <author>
+      <name>k2nr</name>
+    </author>
+    <content type="html">&lt;p&gt;これは&lt;a href="http://qiita.com/advent-calendar/2014/clojure"&gt;Clojure Advent Calendar&lt;/a&gt;の14日目です。&lt;/p&gt;
+
+&lt;p&gt;Transducders自体に関しての説明はRich本人の説明が素晴らしいし、僕も以前ブログで言及したので省略します。ついでに&lt;code&gt;core.async&lt;/code&gt;も基本的な使い方は理解している前提で記事を書きます。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://blog.cognitect.com/blog/2014/8/6/transducers-are-coming"&gt;TRANSDUCERS ARE COMING&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.youtube.com/watch?v=6mTbuzafcII"&gt;“Transducers” by Rich Hickey&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.youtube.com/watch?v=4KqUvG8HPYo&amp;amp;amp;list=PLZdCLR02grLoc322bYirANEso3mmzvCiI&amp;amp;amp;index=8"&gt;Rich Hickey - Inside Transducers&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://k2nr.me/blog/2014/08/10/transducers.html"&gt;Clojure1.7のtransducersとは...&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+  </entry>
+  <entry>
+    <title>最小のdockerイメージを作る</title>
+    <link rel="alternate" href="http://k2nr.me/blog/2014/12/09/create-small-image-for-docker.html"/>
+    <id>http://k2nr.me/blog/2014/12/09/create-small-image-for-docker.html</id>
+    <published>2014-12-09T10:42:46Z</published>
+    <updated>2015-12-17T01:28:10+00:00</updated>
+    <author>
+      <name>k2nr</name>
+    </author>
+    <content type="html">&lt;p&gt;この記事は&lt;a href="http://qiita.com/advent-calendar/2014/docker"&gt;Docker Advent Calendar 2014&lt;/a&gt;の9日目です。&lt;/p&gt;
+
+&lt;p&gt;書こうと思ってたことが完全にネタかぶりしたので今日はどうでもいい小ネタを書きます。&lt;/p&gt;
+
+&lt;p&gt;dockerのイメージをDockerfileで作るにはベースイメージが必要ですよね。例えばgoを使ったWebアプリケーションを作ろうと思ったら&lt;a href="https://registry.hub.docker.com/_/golang/"&gt;公式のgolangイメージ&lt;/a&gt;を使う人が多いだろうと思います。
+公式の安心感もあるし基本的にそれでいいと僕も思うんですが、サイズが大きいんですよね。今手元で&lt;code&gt;docker pull golang...&lt;/code&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>vimとかemacsとかのこだわり設定</title>
+    <link rel="alternate" href="http://k2nr.me/blog/2014/09/30/unproductive-editor-config.html"/>
+    <id>http://k2nr.me/blog/2014/09/30/unproductive-editor-config.html</id>
+    <published>2014-09-30T11:55:39Z</published>
+    <updated>2015-12-17T01:28:10+00:00</updated>
+    <author>
+      <name>k2nr</name>
+    </author>
+    <content type="html">&lt;p&gt;を考えたり書いたり探してる時間でお前はもっと有益なコードを書けたはずだ&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>dockerによるmicro servicesのためのプラットフォームつくった</title>
+    <link rel="alternate" href="http://k2nr.me/blog/2014/09/18/dokkaa-the-simplest-docker-cluster-platform-for-microservices.html"/>
+    <id>http://k2nr.me/blog/2014/09/18/dokkaa-the-simplest-docker-cluster-platform-for-microservices.html</id>
+    <published>2014-09-18T10:19:18Z</published>
+    <updated>2015-12-17T01:28:10+00:00</updated>
+    <author>
+      <name>k2nr</name>
+    </author>
+    <content type="html">&lt;p&gt;最近がんばって作ってたものがありまして、とりあえず最低限動くようになったので解説と紹介記事です。&lt;/p&gt;
+
+&lt;p&gt;なんか流行ってるからタイトルになんとなくmicro servicesとか付けたけど別にmicro serviceを指向しているわけではありません。&lt;/p&gt;
+
+&lt;h2 id="dokkaa"&gt;Dokkaa&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/k2nr/dokkaa"&gt;dokkaa&lt;/a&gt;です。
+docker使ってるからdokkaaなんですが、呼ぶとき紛らわしいのでdokkaaの方はど→かー↑↑なアクセントです。dockerはど↑っかー→ですね。&lt;/p&gt;
+
+&lt;p&gt;dokkaaは複数のレポジトリで開発しているのでまと...&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>マクロ機能が存在すればいいというわけではない</title>
+    <link rel="alternate" href="http://k2nr.me/blog/2014/09/01/macro.html"/>
+    <id>http://k2nr.me/blog/2014/09/01/macro.html</id>
+    <published>2014-09-01T05:07:04Z</published>
+    <updated>2015-12-17T01:28:10+00:00</updated>
+    <author>
+      <name>k2nr</name>
+    </author>
+    <content type="html">&lt;p&gt;どうもLisp教信者です。&lt;/p&gt;
+
+&lt;p&gt;HaskellにはTemplate Haskellありますし、Scalaにもマクロあるらしいですね。確かElixirにもマクロあるという情報を聞いた気がします。
+マクロ、つまり抽象構文木にアクセスする機能を実装している言語ってのはたくさんあるんですが、Lisper的観点から見解を述べます。&lt;/p&gt;
+
+&lt;p&gt;プログラミング言語というのはソースコードのコンパイル過程で大体において抽象構文木と呼ばれるデータ構造を中間データとして出力します。
+マクロはこの抽象構文木にアクセスして書...&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Dockerにおけるマルチホストでのコンテナ間リンク考察</title>
+    <link rel="alternate" href="http://k2nr.me/blog/2014/08/21/docker-container-management.html"/>
+    <id>http://k2nr.me/blog/2014/08/21/docker-container-management.html</id>
+    <published>2014-08-21T12:09:35Z</published>
+    <updated>2015-12-17T01:28:10+00:00</updated>
+    <author>
+      <name>k2nr</name>
+    </author>
+    <content type="html">&lt;p&gt;最近dockerの事ばかり考えてます。
+マルチホストでdockerを運用する際、真っ先にぶちあたる問題はコンテナ間の連携をどのようにして実現するか、あるいは広義にはService Discoveryをいかにして実現するか、ということだ。&lt;/p&gt;
+
+&lt;p&gt;いろいろ調べたり作ったりした結果わかったことをまとめておく。&lt;/p&gt;
+
+&lt;h2 id="シングルホストの場合"&gt;シングルホストの場合&lt;/h2&gt;
+
+&lt;p&gt;まずシングルホストの場合についておさらいする。&lt;/p&gt;
+
+&lt;p&gt;dockerでコンテナ間のリンクを行う方法はたくさんある。シングルホストであれば一般的なのは&lt;a href="https://docs.docker.com/userguide/dockerlinks/"&gt;Linking Containers&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>dokkuのつらいところとつかいどころ</title>
+    <link rel="alternate" href="http://k2nr.me/blog/2014/08/20/dokku.html"/>
+    <id>http://k2nr.me/blog/2014/08/20/dokku.html</id>
+    <published>2014-08-20T12:45:59Z</published>
+    <updated>2015-12-17T01:28:10+00:00</updated>
+    <author>
+      <name>k2nr</name>
+    </author>
+    <content type="html">&lt;p&gt;最近dockerの事ばかり考えてます。タイトルが言いたかっただけなので以下蛇足なのですが本文を書きます。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/progrium/dokku"&gt;dokku&lt;/a&gt;という、dockerによるOSSのherokuライクなPaaS実装があります。ここ数ヶ月くらい主に業務でdokkuを実際に使いまくってたんですが、すごい便利だなと思う反面トラップがそこかしこに仕掛けられてはまりまくってたのでここにまとめます。&lt;/p&gt;
+
+&lt;h2 id="dokkuとは"&gt;dokkuとは&lt;/h2&gt;
+
+&lt;p&gt;githubの「Docker powered mini-Heroku in around 100 lines of...&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>ネストの深さとコードの複雑度</title>
+    <link rel="alternate" href="http://k2nr.me/blog/2014/08/16/nest-and-complexity.html"/>
+    <id>http://k2nr.me/blog/2014/08/16/nest-and-complexity.html</id>
+    <published>2014-08-15T21:22:53Z</published>
+    <updated>2015-12-17T01:28:10+00:00</updated>
+    <author>
+      <name>k2nr</name>
+    </author>
+    <content type="html">&lt;p&gt;この記事は「コードでも書こう」とエディタを起動したものの書くコードがない状態に陥った僕がやり場のない感情を消化するために書いたものであり、多くの人にとっては全くもって読む価値の無い記事である。そもそも僕個人の存在が社会にとっては全くもって価値のない存在であって、そのような存在から生み出される文章に価値がないことは自明である。&lt;/p&gt;
+
+&lt;p&gt;さて、本題です。
+本題をまとめると「ネストの深さではなく複雑度でコードの良し悪しを判断すべき」という内容。
+言いたいことはこれで終わりなので、以降の価値の無い文章を...&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>clojure1.7のtransducersの中身を見てみる</title>
+    <link rel="alternate" href="http://k2nr.me/blog/2014/08/11/transducers-2.html"/>
+    <id>http://k2nr.me/blog/2014/08/11/transducers-2.html</id>
+    <published>2014-08-11T14:44:40Z</published>
+    <updated>2015-12-17T01:28:10+00:00</updated>
+    <author>
+      <name>k2nr</name>
+    </author>
+    <content type="html">&lt;p&gt;&lt;a href="http://k2nr.me/blog/2014/08/10/transducers.html"&gt;続き&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;もう少しtransducersの中身を見ていきます。&lt;/p&gt;
+
+&lt;p&gt;まず、前に取り上げた&lt;code&gt;map&lt;/code&gt;ですが、実際のコードは&lt;a href="https://github.com/clojure/clojure/blob/2a09172e0c3285ccdf79d1dc4d399d190678b670/src/clj/clojure/core.clj#L2554"&gt;こうなってます&lt;/a&gt;。
+(transducerの部分のみ抜粋)&lt;/p&gt;
+&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
+    &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;fn&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;f1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
+      &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;fn&lt;/span&gt;&lt;span class="w"&gt;
+        &lt;/span&gt;&lt;span class="p"&gt;([]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;f1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
+        &lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;f1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;
+        &lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
+           &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;f1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;f&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="w"&gt;
+        &lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;</content>
+  </entry>
+  <entry>
+    <title>Clojure1.7のtransducersとはなにか</title>
+    <link rel="alternate" href="http://k2nr.me/blog/2014/08/10/transducers.html"/>
+    <id>http://k2nr.me/blog/2014/08/10/transducers.html</id>
+    <published>2014-08-10T07:11:34Z</published>
+    <updated>2015-12-17T01:28:10+00:00</updated>
+    <author>
+      <name>k2nr</name>
+    </author>
+    <content type="html">&lt;p&gt;Rich Hickey様から以下のような発信がなされました。
+Clojure1.7にtransducersというものが追加されるよ、という話です。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://blog.cognitect.com/blog/2014/8/6/transducers-are-coming"&gt;Transducers are Coming — Cognitect Blog&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;どんなものかというと、従来の&lt;code&gt;core&lt;/code&gt;のシーケンスを扱う関数群に新しい機能が追加されていてたとえば&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;(map inc)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これがmapping transducerというtransducerを返します。
+このtransducerを使って&lt;/p&gt;
+&lt;pre class="highlight clojure"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;xform&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;</content>
+  </entry>
+</feed>

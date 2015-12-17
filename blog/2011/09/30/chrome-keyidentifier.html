@@ -1,0 +1,277 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>Chrome: keyIdentifierとOSとキーレイアウト</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2011 blog_2011_09 blog_2011_09_30 blog_2011_09_30_chrome-keyidentifier">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>Chrome: keyIdentifierとOSとキーレイアウト</h1>
+      <time datetime="2011-09-30" pubdate>Sep 30, 2011</time>
+    </header>
+    <p><br />みんな違ってみんないい<br />- みすず
+<div></div>
+<div>わけないだろバカ。<br />今日はChromeのkeyIdentifier関連のバグはたちが悪いというお話。</p>
+
+<p><a href="https://chrome.google.com/webstore/detail/gghkfhpblkcmlkmpcpgaajbbiikbhpdi">Vichrome</a>ではあらゆるキーのkeydownを誰よりも早く受け取り、「何が入力されたのか」を正確に認識しなければなりません。</p>
+
+<p>一般にクライアントサイドのJavascript（というかDOM）ではキー押下を検知するのにonkeydownイベントを拾ってkeyIdentifierプロパティを参照します。</p>
+
+<p><a href="http://www.w3.org/TR/2007/WD-DOM-Level-3-Events-20071221/keyset.html">これが仕様</a></p>
+
+<p>このkeyIdentifierという奴はなかなか優れもので、こいつを使うと「どのキーが押されたか」ではなく「何が入力されたか」が一意に認識できます。つまり、&rsquo;)&lsquo;というキーはJPNキーボードレイアウトだとShift+9キーだけど、USレイアウトだとShift+0キーなのに、どちらのレイアウトで&rsquo;)'が入力されても同じ値&quot;U+0029&quot;が通知されます。そんなの当たり前じゃねーかと思うでしょう。僕もそう思ってましたが、それが当たり前じゃないのがDOMクオリティ。<br />実際のコードはこんな感じ。</p>
+
+<pre class="brush: javascript; gutter: true; first-line: 1; highlight: []; html-script: false">vichrome.key.keyIdentifier = {
+    "U+0031"    : "1",
+    "U+0032"    : "2",
+    "U+0033"    : "3",
+    "U+0034"    : "4",
+    "U+0035"    : "5",
+    "U+0036"    : "6",
+    "U+0037"    : "7",
+    "U+0038"    : "8",
+    "U+0039"    : "9",
+    "U+0030"    : "0",
+    "U+0021"    : "!",
+    "U+0022"    : '"',
+    "U+0023"    : "#",
+    "U+0024"    : "$",
+    "U+0025"    : "%",
+    "U+0026"    : "&amp;",
+    "U+0027"    : "'",
+    "U+0028"    : "(",
+    "U+0029"    : ")",
+    "U+002D"    : "-",
+   "U+003D"    : "=",
+    "U+005E"    : "^",
+    "U+007E"    : "~",
+    "U+00A5"    : "\\",
+    "U+005C"    : "\\",
+    "U+007C"    : "|",
+    "U+0041"    : "a",
+    "U+0042"    : "b",
+    "U+0043"    : "c",
+    "U+0044"    : "d",
+    "U+0045"    : "e",
+    "U+0046"    : "f",
+    "U+0047"    : "g",
+    "U+0048"    : "h",
+    "U+0049"    : "i",
+    "U+004A"    : "j",
+    "U+004B"    : "k",
+    "U+004C"    : "l",
+    "U+004D"    : "m",
+    "U+004E"    : "n",
+    "U+004F"    : "o",
+    "U+0050"    : "p",
+    "U+0051"    : "q",
+    "U+0052"    : "r",
+    "U+0053"    : "s",
+    "U+0054"    : "t",
+    "U+0055"    : "u",
+    "U+0056"    : "v",
+    "U+0057"    : "w",
+    "U+0058"    : "x",
+    "U+0059"    : "y",
+    "U+005A"    : "z",
+    "U+0040"    : "@",
+    "U+0060"    : "`",
+    "U+005B"    : "[",
+    "U+007B"    : "{",
+    "U+003B"    : ";",
+    "U+002B"    : "+",
+    "U+003A"    : ":",
+    "U+002A"    : "*",
+    "U+005D"    : "]",
+    "U+007D"    : "}",
+    "U+002C"    : ",",
+    "U+003C"    : "&lt;",
+    "U+002E"    : ".",
+    "U+003E"    : "&gt;",
+    "U+002F"    : "/",
+    "U+003F"    : "?",
+    "U+005F"    : "_",
+    "U+0020"    : "SPACE",
+    "Left"      : "LEFT",
+    "Down"      : "DOWN",
+    "Up"        : "UP",
+    "Right"     : "RIGHT",
+    "Enter"     : "CR",
+    "U+0008"    : "BS",
+    "U+007F"    : "DEL",
+    "U+0009"    : "TAB",
+    "F1"        : "F1",
+    "F2"        : "F2",
+    "F3"        : "F3",
+    "F4"        : "F4",
+    "F5"        : "F5",
+    "F6"        : "F6",
+    "F7"        : "F7",
+    "F8"        : "F8",
+    "F9"        : "F9",
+    "F10"       : "F10",
+    "F11"       : "F11",
+    "F12"       : "F12",
+    "U+001B"    : "ESC",
+    "Home"      : "HOME",
+    "End"       : "END",
+    "Control"   : "CTRL",
+    "Shift"     : "SHIFT",
+    "Alt"       : "ALT",
+    "Meta"      : "META",
+    "PageDown"  : "PAGEDOWN",
+    "PageUp"    : "PAGEUP",
+    "CapsLock"  : "CAPSLOCK"
+};</pre>
+
+<p>さて、本来全ての入力が一意に識別できるはずのkeyIdentifierですが、Chrome（というか多分Webkit）ではそう上手くいきません。WindowsとLinux版のChromeにはバグがあって、<b>一部の入力はkeyIdentifierが重複しています</b>。実際にコードを見たほうが早いでしょう。</p>
+
+<pre class="brush: javascript; gutter: true; first-line: 1; highlight: []; html-script: false">vichrome.key.winKeyIdentifier_ja = {
+    "U+00BC":",",
+    "U+00BE":".",
+    "U+00BF":"/",
+    "U+00E2":"\\",
+    "U+00BB":";",
+    "U+00BA":":",
+    "U+00DD":"]",
+    "U+00C0":"@",
+    "U+00DB":"[",
+    "U+00BD":"-",
+    "U+00DE":"^",
+    "U+00DC":"\\"
+};
+
+vichrome.key.shiftWinKeyIdentifier_ja = {
+    "U+00BC":"&lt;",
+    "U+00BE":"&gt;",
+    "U+00BF":"?",
+    "U+00E2":"_",
+    "U+00BB":"+",
+    "U+00BA":"*",
+    "U+00DD":"}",
+    "U+00C0":"`",
+    "U+00DB":"{",
+    "U+00BD":"=",
+    "U+00DE":"~",
+    "U+00DC":"|",
+    "U+0031":"!",
+    "U+0032":'"',
+    "U+0033":"#",
+    "U+0034":"$",
+    "U+0035":"%",
+    "U+0036":"&amp;",
+    "U+0037":"'",
+    "U+0038":"(",
+    "U+0039":")"
+};</pre>
+
+<p>例えば&rsquo;]'と&rsquo;}'は同じ値<span class="Apple-style-span" style="font-family: monospace; white-space: pre;">&ldquo;U+00DD&quot;になっています。Win/Linuxの場合は上記のような感じで、さらにshiftキーで条件分岐させなければ正しい値は取得できません。</span><br /><span class="Apple-style-span" style="font-family: monospace;"><span class="Apple-style-span" style="white-space: pre;"><br /></span></span><br /><span class="Apple-style-span" style="font-family: monospace;"><span class="Apple-style-span" style="white-space: pre;">ここまでは、いいんです。１００歩譲って頑張ればキーを識別できるから。</span></span><br /><span class="Apple-style-span" style="font-family: monospace;"><span class="Apple-style-span" style="white-space: pre;"><br /></span></span><br /><span class="Apple-style-span" style="font-family: monospace;"><span class="Apple-style-span" style="white-space: pre;">上のコードをよく見てもらえば分かる通り、通知されるIdentifierはおもいっきりキー配列に依存してます。同一キーの文字は同じIDです。つまり、キー配列が変わると通知されるIDも変わるのでこの解決策では動きません。そこで、USレイアウトの場合は上記の***_jaではなくて、</span></span><br /><span class="Apple-style-span" style="font-family: monospace;"><span class="Apple-style-span" style="white-space: pre;"><br /></span></span>
+<pre class="brush: javascript; gutter: true; first-line: 1; highlight: []; html-script: false">vichrome.key.winKeyIdentifier_us = {
+    "U+00BC":",",
+    "U+00BE":".",
+    "U+00BF":"/",
+    "U+00BB":"=",
+    "U+00BA":";",
+    "U+00DD":"]",
+    "U+00DB":"[",
+    "U+00BD":"-",
+    "U+00DC":"\\",
+    "U+00DE":"'",
+    "U+0060":"`"
+};
+
+vichrome.key.shiftWinKeyIdentifier_us = {
+    "U+00BC":"&lt;",
+    "U+00BE":"&gt;",
+    "U+00BF":"?",
+    "U+00BB":"+",
+    "U+00BA":":",
+    "U+00DD":"}",
+    "U+00DB":"{",
+    "U+00BD":"_",
+    "U+0038":"*",
+    "U+00DC":"|",
+    "U+007E":"~",
+    "U+0036":"^",
+    "U+0031":"!",
+    "U+00DE":'"',
+    "U+0032":"@",
+    "U+0033":"#",
+    "U+0034":"$",
+    "U+0035":"%",
+    "U+0037":"&amp;",
+    "U+0039":"(",
+    "U+0030":")"
+};</pre>
+<p>こんな感じの別のテーブルを準備しなければなりません。世の中にいくつキー配列があるのか知らないですが<b>世界中のあらゆる環境で正しく動くコードを書くことは不可能だということです。</b>実際VichromeでもJPN/US以外のキー配列には対応していません。試せないけど多分バグる。<br />ちなみにこのキー配列に依存してkeyIdentifierが変わってしまうバグ、OSのキーボード設定で通知される値が変わるわけではありません。ブラウザの言語設定に依存しているようです。例えば次のようなコードで取得できます。</p>
+
+<pre class="brush: js">var lang = (navigator.userLanguage||navigator.browserLanguage||navigator.language).substr(0,2);</pre>
+
+<p>なので、例えば日本語環境のWindows、日本語設定のChromeでUSキーボードを使ってるようなマニアックな人はVichromeは一部正しく動かないはずです。いったい何がidentifierだというのか。</p>
+
+<p><p>結論：みんなMacを使いましょう。</div></p>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

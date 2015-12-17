@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>下痢とプログラミング言語</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2012 blog_2012_11 blog_2012_11_15 blog_2012_11_15_geri-and-programming-languages">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>下痢とプログラミング言語</h1>
+      <time datetime="2012-11-15" pubdate>Nov 15, 2012</time>
+    </header>
+    <p>先週くらいから腹痛と下痢が止まりません。
+もともと身体が弱く、下痢になることも珍しくはなかったのですが今回のように24時間連続で下痢と腹痛を繰り返すケースはあまり記憶にありません。</p>
+
+<p>さすがに不安に思って最寄りの消化器科を尋ねて、先生と問答繰り広げました。</p>
+
+<p>「タバコは吸いますか？」</p>
+
+<p>「はい」</p>
+
+<p>「それでお腹の調子が悪くなることは？」</p>
+
+<p>「ないです」</p>
+
+<p>「お酒は？」</p>
+
+<p>「飲みます。が、調子は悪くなりません」</p>
+
+<p>「<strong>バイセクシュアルですか？</strong>」</p>
+
+<p>「いいえ」</p>
+
+<p>「ビオフェルミンは飲んだことありますか？」</p>
+
+<p>「はい。ですが、あまり効果はないように思います」</p>
+
+<p>。。。</p>
+
+<p>結果、先生でも話すだけでは原因を特定できないようで、大腸カメラを提案して頂きました。
+大腸カメラが何なのかは分かりませんでしたが、胃カメラにまつわる辛い話は幾度となく聞いていたので、僕は恐怖を覚えて即答しました。</p>
+
+<p>「まずは原因を特定できなくてもいいので、効きそうな薬を処方してください」</p>
+
+<p>ただカメラを体内に挿入されるのが怖かっただけです。薬を手にして我が家に帰宅すると「チキンだ」「なにビビってるんだ」「世の中にはもっと怖い処置がある」「死ねよ」「恥知らず」「殺すぞ」だのなんだの(誇張あり)散々なバッシングを浴びまして、一体、今日勇気を出して病院に行ったのは何だったのだと疑心暗鬼に陥る有様でした。</p>
+
+<p>それで、本日再度病院に伺いまして、大腸カメラの予約を済ませてきました。</p>
+
+<p>恐怖に慄きながら、ふと思ったんです。</p>
+
+<p><strong>「この話は、プログラマのプログラム言語選択にも同じことが言えるんじゃないか？」</strong></p>
+
+<p>今回僕が選択した「カメラではなく薬で」という処置はあくまで僕の恐怖から生じた消極的な選択です。
+僕はもしかしたらHIVかもしれません。大腸ガンかもしれません。それは薬を投与するだけではわからないのです。</p>
+
+<p>そこにカメラでの検査を避ける合理的理由など存在せず、僕が抱いた感情はただ「カメラ怖い」でした。</p>
+
+<p>ただ、アナルにカメラをぶっ刺されるのが怖かったんです。誰だってそうでしょう。アナルに異物を挿入されることなどそうそうありません。怖がるのは僕だけではないはずです。</p>
+
+<p>プログラマも同じです。今まで経験したことのないことを経験するのが怖いのです。自分は今までプログラミングにおいてそこそこの成果を納め、対外的に認められてきた実績があります。しかしながら月日が経つにつれ、その実績が持つ効力は薄れてきます。やれ「時代はRuby On Rails」だの「cakePHP」だの「node.js」が熱いだの要求してくるわけです。</p>
+
+<p>私の実績は何だったというのでしょう？私の過去に遡ってまで、私の実績は無意味だったと訴求するのでしょうか。</p>
+
+<p>しかしながら、考えてみれば私に責がないわけでもありません。</p>
+
+<p>時代の流れを感じながら「今はそこそこ稼げてる」と、現状に満足していたのは私です。言語に限らず、様々なプラットフォーム、ライブラリ。知らなくても「とりあえず今は」稼げてると判断し、勉学を怠った私にも責任があります。</p>
+
+<p>今まで経験してきた常識が通用しない、新しい分野を勉強するのは時間がかかる、それが金になるかどうか分からない。</p>
+
+<p>そうやってこれまで問題を先送りにしてきたのです。「今やらなくてもいい、今後必要になればやればいい」と。</p>
+
+<p>それでは遅かったのかもしれません。もしかしたらその先送りした未来は大腸ガンで、取り返しのつかない将来を迎え、いずれ自分の過去を後悔するかもしれません。</p>
+
+<p>「ああ、あの時あれをやっておけばよかった」</p>
+
+<p>下痢も同じです。今ボクがあなたが抱えてる下痢は、ちょっとした腸の不機嫌かもしれません。時代の変わり目でWeb業界におけるPHPの役割が一時的に低下しただけかもしれません。逆に、僕があなたが抱えてるのは将来において取り返しの付かない大腸ガンかもしれません。PHP自体が廃れていく前兆かもしれません。</p>
+
+<p>未来がどうなるのかは僕にはわかりません。僕とあなたにできることは未来を推測することだけです。</p>
+
+<p>ただの一時的な腹痛だったのか、それともPHP自体(あるいはあなたが使用しているフレームワーク)が廃れていくのかもしません。未来を想像してリスクの顕在化を避けるかどうかを決定するのは、</p>
+
+<p>あなた次第です。</p>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

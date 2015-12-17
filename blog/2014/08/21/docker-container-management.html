@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>Dockerにおけるマルチホストでのコンテナ間リンク考察</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2014 blog_2014_08 blog_2014_08_21 blog_2014_08_21_docker-container-management">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>Dockerにおけるマルチホストでのコンテナ間リンク考察</h1>
+      <time datetime="2014-08-21" pubdate>Aug 21, 2014</time>
+    </header>
+    <p>最近dockerの事ばかり考えてます。
+マルチホストでdockerを運用する際、真っ先にぶちあたる問題はコンテナ間の連携をどのようにして実現するか、あるいは広義にはService Discoveryをいかにして実現するか、ということだ。</p>
+
+<p>いろいろ調べたり作ったりした結果わかったことをまとめておく。</p>
+
+<h2 id="シングルホストの場合">シングルホストの場合</h2>
+
+<p>まずシングルホストの場合についておさらいする。</p>
+
+<p>dockerでコンテナ間のリンクを行う方法はたくさんある。シングルホストであれば一般的なのは<a href="https://docs.docker.com/userguide/dockerlinks/">Linking Containers</a>である。</p>
+
+<p>まずリンク先となるDB用コンテナを起動する</p>
+<pre class="highlight plaintext"><code>docker run -d --name db training/postgres
+</code></pre>
+
+<p>次に、リンク元のwebアプリ用コンテナ起動する</p>
+<pre class="highlight plaintext"><code>docker run -d -P --name web --link db:db training/webapp python app.py
+</code></pre>
+
+<p><code>--link db:db</code>の部分がリンクの指定だ。先に起動した<code>db</code>コンテナをここで起動した<code>web</code>コンテナに<code>db</code>という名前でリンクすることを意味している。
+リンクすると、<code>web</code>コンテナには次のような環境変数がセットされて、<code>db</code>コンテナへのアクセスが可能となる。</p>
+<pre class="highlight plaintext"><code>DB_NAME=/web/db
+DB_PORT=tcp://172.17.0.5:5432
+DB_PORT_5000_TCP=tcp://172.17.0.5:5432
+DB_PORT_5000_TCP_PROTO=tcp
+DB_PORT_5000_TCP_PORT=5432
+DB_PORT_5000_TCP_ADDR=172.17.0.5
+</code></pre>
+
+<p>このリンク方法の問題は、マルチホストに渡るコンテナ間ではリンクできないことだ。単一のホスト内でコンテナの連携が完結するのであればこの手法でなんら問題はないのだが、実運用にdockerを使うとなると大抵はマルチホストでコンテナを分散させることになる。</p>
+
+<h2 id="static-linking">Static Linking</h2>
+
+<p>ではホストを跨るコンテナ間のリンクはどうすればよいだろう。最も素朴な方法は以下で説明するStatic Linkingである。Static Linkingは僕が今名付けた。</p>
+
+<p>例えばホストA(<code>192.168.100.1</code>)でredisのコンテナを次のように起動する。</p>
+<pre class="highlight plaintext"><code>docker run -d -p 5432:5432 --name db training/postgres
+</code></pre>
+
+<p>で、ホストBで起動する<code>webapp</code>コンテナから接続するのに、<code>192.168.100.1:5432</code>を直接指定して接続するというものだ。</p>
+
+<p>この方法の問題点はご想像のとおり、</p>
+
+<ul>
+<li>リンク先のコンテナ(例ではpostgres)コンテナがどのホストで動いているのかをリンク元のコンテナが知っている必要がある</li>
+<li>リンク先コンテナが動作するホストが変更になった場合、リンク元も変更・再起動しなければならない</li>
+</ul>
+
+<p>という点だ。</p>
+
+<h2 id="static-ambassador">Static Ambassador</h2>
+
+<p>上記の問題を解決する手法として一般的なのはいわゆる<a href="https://docs.docker.com/articles/ambassador_pattern_linking/">Ambassadorパターン</a>というやつだろう。</p>
+
+<p>リンク先の説明が分かりやすいが、簡単にいえば<code>consumer</code>コンテナから別ホストの<code>redis</code>コンテナへリンクする場合、</p>
+<pre class="highlight plaintext"><code>(consumer) --&gt; (redis-ambassador) --&gt; (redis)
+</code></pre>
+
+<p>となるように間に<code>redis-ambassador</code>というコンテナを挟む。この<code>redis-ambassador</code>は<code>consumer</code>コンテナと同一のホストで動作しており、<code>redis-ambassador</code>の<code>6379</code>ポートへのアクセスを<code>redis</code>コンテナに転送するプロキシである。</p>
+
+<p><code>consumer</code>は最初に説明した方法で<code>redis-ambassador</code>にリンクする。
+このように間にambassadorを入れることで<code>consumer</code>から見たら<code>redis-ambassador</code>にリクエストを送るだけなので<code>redis</code>コンテナは別ホストにいるかどうかを気にしなくてよい。<code>redis</code>コンテナの場所が変わる場合は<code>redis-ambassador</code>の設定を変えて再起動すればよい。</p>
+
+<p>すればよいのだが、この方法の問題はambassadorの設定が静的であることだ。上述のようにリンク先のコンテナの場所が変わる場合、それにあわせてambassadorの設定を変更・再起動しなければならない。</p>
+
+<h2 id="dynamic-ambassador">Dynamic Ambassador</h2>
+
+<p>このStatic Ambassadorの問題を解決するための手法がDynamic Ambassadorである。
+簡単にいえば、Static Ambassadorで起動時に静的に指定していたリンク先の情報を<code>etcd</code>等のKVSに持たせて、Dynamic AmbassadorはKVSの変化を監視し、ルーティング情報を更新する。</p>
+
+<p>Dynamic Ambassadorはいくつか実装がある</p>
+
+<ul>
+<li><a href="https://coreos.com/blog/docker-dynamic-ambassador-powered-by-etcd/">Dynamic Docker links with an ambassador powered by etcd</a>
+
+<ul>
+<li>Ambassadorとして<a href="https://github.com/polvi/nsproxy">nsproxy</a>を使っている</li>
+</ul></li>
+<li><a href="https://github.com/progrium/ambassadord">ambassadord</a>のStandard Mode
+
+<ul>
+<li>現状ではKVSとして<code>consul</code>と<code>etcd</code>が使える</li>
+</ul></li>
+</ul>
+
+<p>このDynamic Ambassadorを実現するにあたって重要なのは「誰が、いつ、KVSを更新するのか」ということだ。
+コンテナのスタート時に同時にKVSを更新するようにデプロイスクリプトを組むというのがひとつだが、より良いと感じたのは<a href="https://github.com/progrium/registrator">registrator</a>による手法。</p>
+
+<p>registratorはdockerのイベントを監視し、コンテナの開始と停止のタイミングでコンテナの情報をdocker APIを使って取得、適切にKVSを更新する。この際、起動するコンテナの環境変数を利用して任意のメタデータを登録することも可能だ。</p>
+
+<h2 id="dns-based-service-discovery">DNS Based Service Discovery</h2>
+
+<p>たとえば<a href="http://www.consul.io">consul</a>や<a href="https://github.com/skynetservices/skydns">skydns</a>といったDNSベースのサービスディスカバリツールを使ってマルチホストでのコンテナリンクを実現する手法だ。</p>
+
+<p>consulよく分かってないのでskydnsを例に説明する。</p>
+
+<p><a href="https://github.com/skynetservices/skydns">skydns</a>は、etcdをバックエンドにしたDNSだ。たとえば以下のようにetcdに値を登録することで、<code>1.rails.production.east.skydns.local</code>を<code>service1.example.com:8080</code>に解決するSRVレコードを登録できる。</p>
+<pre class="highlight plaintext"><code>curl -XPUT http://127.0.0.1:4001/v2/keys/skydns/local/skydns/east/production/rails/1 \
+    -d value='{"host":"service1.example.com","port":8080}'
+</code></pre>
+
+<p>ちょうどいい実装が見つからなかったので、あくまで想像だが実現する手順としては</p>
+
+<ol>
+<li>このskydnsを各ホストで起動しておき、</li>
+<li>各ホストで起動するコンテナのdnsを<code>docker run</code>の<code>--dns</code>オプションでlocalhostのskydnsに向けるようにする。</li>
+<li>そして、上で紹介した<a href="https://github.com/progrium/registrator">registrator</a>と同様の仕組みを利用してDNSレコードを更新する。つまり、dockerコンテナの起動・停止イベントを監視してetcdを通じてskydnsのレコード情報を更新するコンテナを各ホストで動作させておく。このとき、自コンテナのドメインに関する情報はやはり環境変数にしていするのがよいだろう。</li>
+</ol>
+
+<p>ちなみに、registratorではskydnsに対応の予定はあるようだが現時点では対応してない。</p>
+
+<p>このようにすることで、各コンテナは予め取り決めたドメイン名を通じて任意のコンテナとやりとりすることができるようになり、さらにambassadorのような中間コンテナも不要となる。</p>
+
+<h1 id="まとめ">まとめ</h1>
+
+<p>ということで、マルチホスト・マルチコンテナでのコンテナ間通信についてまとめてみた。
+どの手法を選択するかというのは実際の要件によりけりだと思うが、「Dynamic Ambassador」と「DNS Based Service Discovery」が汎用性高そうでおすすめである。
+実はほかにも<a href="https://github.com/GoogleCloudPlatform/kubernetes">Kubernetes</a>のproxyとか、<a href="https://github.com/progrium/ambassadord">ambassadord</a>のomni modeとか、flynnの<a href="https://github.com/flynn/flynn/tree/master/discoverd">discoverd</a>とか紹介したかったのだが力尽きた。</p>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

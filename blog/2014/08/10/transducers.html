@@ -1,0 +1,216 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>Clojure1.7のtransducersとはなにか</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2014 blog_2014_08 blog_2014_08_10 blog_2014_08_10_transducers">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>Clojure1.7のtransducersとはなにか</h1>
+      <time datetime="2014-08-10" pubdate>Aug 10, 2014</time>
+    </header>
+    <p>Rich Hickey様から以下のような発信がなされました。
+Clojure1.7にtransducersというものが追加されるよ、という話です。</p>
+
+<p><a href="http://blog.cognitect.com/blog/2014/8/6/transducers-are-coming">Transducers are Coming — Cognitect Blog</a></p>
+
+<p>どんなものかというと、従来の<code>core</code>のシーケンスを扱う関数群に新しい機能が追加されていてたとえば</p>
+<pre class="highlight plaintext"><code>(map inc)
+</code></pre>
+
+<p>これがmapping transducerというtransducerを返します。
+このtransducerを使って</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">xform</span><span class="w"> </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">inc</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">sequence</span><span class="w"> </span><span class="n">xform</span><span class="w"> </span><span class="o">'</span><span class="p">(</span><span class="nf">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">))</span><span class="w">
+</span><span class="c1">; =&gt; (2 3 4)
+</span><span class="w">
+</span><span class="p">(</span><span class="nb">into</span><span class="w"> </span><span class="n">xform</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">])</span><span class="w">
+</span><span class="c1">; =&gt; [2 3 4]
+</span></code></pre>
+
+<p>このように任意のtransducerによるシーケンスの変換ができるわけです。ほかにも多数の関数がtransducerを扱えるように変更されて</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">xform</span><span class="w"> </span><span class="p">(</span><span class="nb">drop</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">sequence</span><span class="w"> </span><span class="n">xform</span><span class="w"> </span><span class="o">'</span><span class="p">(</span><span class="nf">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">))</span><span class="w">
+</span><span class="c1">; =&gt; (2 3)
+</span></code></pre>
+
+<p>であるとか、</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">xform</span><span class="w"> </span><span class="p">(</span><span class="nb">take-while</span><span class="w"> </span><span class="o">#</span><span class="p">(</span><span class="nb">&lt;</span><span class="w"> </span><span class="n">%</span><span class="w"> </span><span class="mi">10</span><span class="p">)))</span><span class="w">
+
+</span><span class="p">(</span><span class="nf">transduce</span><span class="w"> </span><span class="n">xform</span><span class="w"> </span><span class="nb">+</span><span class="w"> </span><span class="p">(</span><span class="nb">+</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="w"> </span><span class="mi">100</span><span class="p">))</span><span class="w">
+</span><span class="c1">; =&gt; 45
+</span></code></pre>
+
+<p>また、transducerは関数合成が可能なので</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">xform</span><span class="w"> </span><span class="p">(</span><span class="nb">comp</span><span class="w"> </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">inc</span><span class="p">)</span><span class="w">
+                 </span><span class="p">(</span><span class="nb">filter</span><span class="w"> </span><span class="n">even?</span><span class="p">)</span><span class="w">
+                 </span><span class="p">(</span><span class="nb">drop</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w">
+                 </span><span class="p">(</span><span class="nb">take</span><span class="w"> </span><span class="mi">10</span><span class="p">)))</span><span class="w">
+</span><span class="p">(</span><span class="nf">sequence</span><span class="w"> </span><span class="n">xform</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="p">))</span><span class="w">
+</span><span class="c1">; =&gt; (4 6 8 10 12 14 16 18 20 22)
+</span></code></pre>
+
+<p>こんな具合ですね。
+この記事では一切触れませんが、<code>core.async</code>でもtransducersを扱えるらしく、これもtransducersの大きなアピールポイントですね。</p>
+
+<p>(ところでreducersは一体どうなるんでしょう)</p>
+
+<h2 id="transducersとは何者なのか">transducersとは何者なのか</h2>
+
+<p>transducers、非常に抽象的で分かりづらかったんですが、なんとなくわかってきたのでまとめます。</p>
+
+<p>まずみんな大好き<code>reduce</code>という関数があります。たとえば</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="nb">reduce</span><span class="w"> </span><span class="nb">+</span><span class="w"> </span><span class="p">(</span><span class="nb">+</span><span class="p">)</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">])</span><span class="w">
+</span><span class="c1">; =&gt; 6
+</span><span class="p">(</span><span class="nb">reduce</span><span class="w"> </span><span class="nb">str</span><span class="w"> </span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="w"> </span><span class="p">[</span><span class="s">"hello"</span><span class="w"> </span><span class="s">"hi"</span><span class="w"> </span><span class="s">"yeah"</span><span class="p">])</span><span class="w">
+</span><span class="c1">; =&gt; "hellohiyeah"
+</span></code></pre>
+
+<p>この<code>reduce</code>の第1引数がRichがいうところの<code>reducing function</code>です。reducing functionは型でいえば</p>
+<pre class="highlight plaintext"><code>a -&gt; b -&gt; a
+</code></pre>
+
+<p>ですね。Richは<code>whatever, input -&gt; whatever</code>と表現してますが。</p>
+
+<p>では、transducerはどのような型かというとRichは</p>
+<pre class="highlight plaintext"><code>(whatever, input -&gt; whatever) -&gt; (whatever, input -&gt; whatever)
+</code></pre>
+
+<p>と表現してます。が、わからない。ので、型がどのように束縛されてるか分かるように表現すると</p>
+<pre class="highlight plaintext"><code>; reducing function type
+a -&gt; b -&gt; a
+
+; transducer type
+(a -&gt; b -&gt; a) -&gt; (a -&gt; c -&gt; a)
+</code></pre>
+
+<p>こういうこと。多分。</p>
+
+<p>抽象的過ぎて伝わらないんで、<code>map</code>関数を例に考えてみましょう。<code>map</code>の第1引数の関数の型を</p>
+<pre class="highlight plaintext"><code>b -&gt; c
+</code></pre>
+
+<p>と表すと、<code>map</code>は次のようなtransducerを返します。</p>
+<pre class="highlight plaintext"><code>(a -&gt; c -&gt; a) -&gt; (a -&gt; b -&gt; a)
+</code></pre>
+
+<p>したがって<code>map</code>の型は</p>
+<pre class="highlight plaintext"><code>(b -&gt; c) -&gt; ((a -&gt; c -&gt; a) -&gt; (a -&gt; b -&gt; a))
+</code></pre>
+
+<p>と表現できます。(従来の<code>map</code>の使い方、つまり第2引数以降を受ける場合は無視します)</p>
+
+<p>この<code>map</code>を順を追って分解していきます。</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">str</span><span class="p">))</span><span class="w">
+</span></code></pre>
+
+<p>このようなmapping transducerを作ると、この<code>t1</code>は</p>
+<pre class="highlight plaintext"><code>;; strの型を以下だとすると
+b -&gt; String
+
+;; t1の型は
+(a -&gt; String -&gt; a) -&gt; (a -&gt; b -&gt; a)
+</code></pre>
+
+<p>ここで<code>a</code>はreduced value、つまりreducing functionの第1引数にあたるものです。</p>
+
+<p>この<code>t1</code>に<code>conj</code>を渡してみます</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="p">(</span><span class="nf">t1</span><span class="w"> </span><span class="nb">conj</span><span class="p">))</span><span class="w">
+</span></code></pre>
+
+<p>ここでの<code>conj</code>はあえて型を書けば</p>
+<pre class="highlight plaintext"><code>[x] -&gt; x -&gt; [x]
+</code></pre>
+
+<p>と書けます。そして、これがreducing functionです。</p>
+
+<p>すると、<code>t2</code>は<code>[String] -&gt; b -&gt; [String]</code>なので</p>
+<pre class="highlight clojure"><code><span class="p">(</span><span class="nf">t2</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w">
+</span><span class="c1">; =&gt; ["1"]
+</span><span class="w">
+</span><span class="p">(</span><span class="nf">t2</span><span class="w"> </span><span class="p">[</span><span class="s">"1"</span><span class="p">]</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w">
+</span><span class="c1">; =&gt; ["1" "2"]
+</span></code></pre>
+
+<p>まとめると、<code>(map str)</code>でtransducerを作り、<code>(t1 conj)</code>でtransducerにreducing functionを与えたわけです。このtransducerの生成とreducing functionの付与を分離したことが従来のシーケンス操作関数と比較した時のtransducerの大きな特徴です。</p>
+
+<p>Richはtransducersについて次のように書いています。</p>
+
+<blockquote>
+<p>The primary power of transducers comes from their fundamental decoupling - they don&rsquo;t care (or know about):</p>
+
+<ul>
+<li>the &lsquo;job&rsquo; being done (what the reducing function does)</li>
+<li>the context of use (what &#39;whatever&rsquo; is)</li>
+<li>the source of inputs (where input comes from).</li>
+</ul>
+</blockquote>
+
+<p>従来の<code>map</code>、<code>filter</code>、その他シーケンス操作関数とtransducersの最大の違いはreducing functionから独立していることで、それによって上の3つの分離が実現できてるのかな、となんとなく感じました。</p>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>

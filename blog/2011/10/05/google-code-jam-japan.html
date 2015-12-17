@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>続・Google Code Jam Japanに参加してみた</title>
+
+    <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml">
+    <link href="/favicon.png" rel="icon" type="image/png">
+    <link href="/stylesheets/normalize.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="/javascripts/all.js" type="text/javascript"></script>
+    <script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script>
+    <script src="/javascripts/modernizr-2.0.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26982762-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="blog blog_2011 blog_2011_10 blog_2011_10_05 blog_2011_10_05_google-code-jam-japan">
+  <header>
+    <hgroup>
+      <a href="/"><h1 class="title">K2NR.ME</h1></a>
+    </hgroup>
+  </header>
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">Tweet</a>
+    <article>
+    <header>
+      <h1>続・Google Code Jam Japanに参加してみた</h1>
+      <time datetime="2011-10-05" pubdate>Oct  5, 2011</time>
+    </header>
+    <p>この話の続き：<a href="http://k2nr.blogspot.com/2011/10/google-code-jam-japan.html">Google Code Jam Japanに参加してみた</a></p>
+
+<blockquote>
+<p>しかし、計算量を減らすためにはもっと簡単な方法がある。<br />「何をしなくてもよいか」を考えることだ。</p>
+</blockquote>
+
+<p>Vichromeの開発してたりドラマ見てたり寝てたりしてたら見着手だった問題Bを解くのを忘れてたのでチャレンジしてみた。</p>
+
+<p><a href="http://code.google.com/codejam/contest/dashboard?c=889487#s=p1">まずは問題を確認してね。</a></p>
+
+<p>予選の本番では問題だけ読んでヤバそうだからスキップした問題だったが、やってみるとやっぱり難しかった。実際、予選の結果でもこの問題だけ解けてる人が少ない。</p>
+
+<p>さっそく問題に移ろう。<br />はじめに最も効率的な飲み方とはどのようなものなのかを考えてみる。まず、当然満足度の高いコーヒーを飲まずに賞味期限を迎えるのはダメだ。これは当たり前。しかし、満足度の最も高いコーヒーが比較的賞味期限まで余裕がある場合、これを先に飲んでる間に次点で満足度の高いコーヒーが賞味期限を迎えて飲めなくなる可能性がある。こういう場合は次点のコーヒーを先に飲んで最も満足度の高いコーヒーはその後で飲むべきだろう。この考え方を突き詰めていくと</p>
+
+<ol>
+<li>最も満足度の高いコーヒーを賞味期限ギリギリで全部飲み終わるように、賞味期限当日から１日目に向かって連続で満足度の最も高いコーヒーを飲む日とする。カレンダーに予定を埋めていく様子を想像しよう。手順１の時点で満足度の最も高いコーヒーを飲む日は予定が埋まってしまっていることになる。</li>
+<li>次に満足度の高いコーヒーを賞味期限ギリギリで全部飲み終わるように飲む。最も満足度の高いコーヒーを飲む日は既に予約が埋まっているので、そこ以外の日を賞味期限当日から１日目に向かって埋めていく。</li>
+</ol>
+
+<p>。。。。</p>
+
+<p>この手順を延々と続けていき、１日目からK日目までの予定が全部埋まるか、飲むコーヒーが無くなったら処理終了。あくまで概念的な話なので、実際には「予定を埋める」というのはコーヒーの満足度を足し合わせるという処理になる。</p>
+
+<p>言葉にすると比較的シンプルなイメージだが実際にプログラミングすると意外にややこしい。説明するのも逆に分かりにくくなりそうなので、実際のコードをコピペすることにする。</p>
+
+<pre class="brush:cpp">
+#include &lt;vector&gt;<br />
+#include &lt;algorithm&gt;<br />
+#include &lt;utility&gt;<br />
+#include &lt;stdio.h&gt;
+using namespace std;
+
+struct Coffee {
+    int64_t   c; // number of cups
+    int64_t   t; // limit date
+    uint32_t s; // satisfied
+};
+
+vector&lt;Coffee&gt; coffees;
+uint32_t N;
+
+bool coffeeSort(const Coffee&amp; a, const Coffee&amp; b) {
+    return (a.s &gt; b.s);
+}
+
+uint64_t drinkDeliciousCoffee(int64_t start, int64_t end) {
+    int64_t total = 0;
+    int64_t p     = end;
+    int i;
+
+    for( i=0; i &lt; N; i++ ) {
+        if( coffees[i].c &gt; 0 &amp;&amp; coffees[i].t &gt;= start ) break;
+    }
+    if( i == N ) return 0;
+
+    p = min( p, coffees[i].t );
+
+    int64_t consumed = min( p - start + 1, coffees[i].c );
+    total += coffees[i].s * consumed;
+    coffees[i].c -= consumed;
+
+    if( p &lt; end )
+        total += drinkDeliciousCoffee( p + 1, end );
+    if(p - consumed &gt;= start )
+         total += drinkDeliciousCoffee( start, p - consumed );
+
+    return total;
+}
+
+int main() {
+    int T; // number of testcases
+
+    scanf("%d", &amp;T);
+    for(int t=0; t &lt; T; t++) {
+        int64_t K;
+
+        scanf("%d %lld", &amp;N, &amp;K);
+
+        coffees.resize(N);
+        for(int i=0; i&lt;N; i++){
+            scanf("%lld %lld %d", &coffees[i].c, &coffees[i].t, &coffees[i].s);
+        }
+
+        sort(coffees.begin(), coffees.end(), coffeeSort);
+        printf("Case #%d: %lld\n", t+1, drinkDeliciousCoffee( 1, K ));
+    }
+
+    return 0;
+}</pre>
+
+<p>63行。なかなかコンパクトかつエレガントに収まったのではないかと思う。関数名は僕の一流のジョークなので素人は真似しないように。</p>
+
+<p>実装のキモはdrinkDeliciousCoffeeがrecursiveな呼び出しになっていることだ。１種類のコーヒーについて処理したら、埋めた予定より後と前の空き予定についてrecursiveに処理を行なっている。イメージとしてはクイックソートのアルゴリズムに近い。このような実装にすることで断片化してコマ切れになった空き予定を考慮する必要がなくなり、常に連続している空き予定だけを考えることが出来る。</p>
+
+<p>このアルゴリズムでは、今日はAを飲んで明日はB明後日はCというように毎日飲むものが違うような場合に最も遅くなる。最悪計算量はよくわからないが、Nが最大で100であることから、１日目からK日目までほとんどの部分で連続して同じ種類を飲むと考えられるため平均計算量は非常に小さい（はず）。いずれにしてもKではなくNに依存するアルゴリズムなので、問題Bには非常に適したアルゴリズムといえるだろう。</p>
+
+<p>ちなみに、僕は問題Bを解くのに３時間くらいかかった。この程度の問題に３時間もかけているようではGoogle Tシャツ（200位以内ね）なんか夢のまた夢なのだろうか。よくわからない。</p>
+
+  </article>
+  
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'k2nrme'; // required: replace example with your forum shortname
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+   })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  <footer>
+  k2nr
+</footer>
+
+  </body>
+</html>
