@@ -1,12 +1,15 @@
+sudo: false
 language: ruby
+cache:
+  - bundler
 rvm:
-  - 2.1.2
+  - 2.2.3
 env:
   global:
     - GIT_COMMITTER_NAME: "k2nr"
-    - GIT_COMMITTER_EMAIL: "likerichie+github@gmail.com"
+    - GIT_COMMITTER_EMAIL: "kazunori.kajihiro@gmail.com"
     - GIT_AUTHOR_NAME: "k2nr"
-    - GIT_AUTHOR_EMAIL: "likerichie+github@gmail.com"
+    - GIT_AUTHOR_EMAIL: "kazunori.kajihiro@gmail.com"
     - secure: "W7NTB52lCUChGTV0nbUVpuEubGeawz+Sh8ugMzIAnEkYZP15phbRzMHGj7pFF5yn+4iRDYbbnUH4CkdHqoQE4mhPNiyedCq4oEe0VU4dlaMWiOGGgrsBkW/UJcVbZgNKbWaBPQk/jJegRmJPQ9WKTSbgV4YM29CENMe8MoIhX4Y="
 install: gem install bundler && bundle install
 script:
